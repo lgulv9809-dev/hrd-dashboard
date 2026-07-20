@@ -1,0 +1,767 @@
+"use client";
+
+import { useParams } from "next/navigation";
+import { useState } from "react";
+import { useProjects } from "@/context/ProjectContext";
+
+
+function calculateProgress(todos:any[]) {
+
+  if(!todos || todos.length === 0){
+    return 0;
+  }
+
+  const completed =
+    todos.filter((todo)=>todo.completed).length;
+
+  return Math.round(
+    (completed / todos.length) * 100
+  );
+
+}
+
+
+
+export default function ProjectDetailPage(){
+
+
+const {id}=useParams();
+
+
+
+const {
+ projects,
+ addCourse,
+ deleteCourse,
+ addTodo,
+ deleteTodo,
+ updateTodo
+}=useProjects();
+
+
+
+const project =
+projects.find(
+(p)=>p.id===Number(id)
+);
+
+
+
+const [showForm,setShowForm]=useState(false);
+
+
+const [courseForm,setCourseForm]=useState({
+
+name:"",
+startDate:"",
+endDate:"",
+people:0,
+manager:""
+
+});
+
+
+
+const [todoOpen,setTodoOpen]=useState<number|null>(null);
+const [todoForm,setTodoForm]=useState({
+
+title:"",
+difficulty:"보통",
+hours:0,
+startDate:"",
+endDate:""
+
+});
+
+
+if(!project){
+
+return(
+<main className="p-10">
+용역 정보를 찾을 수 없습니다.
+</main>
+)
+
+}
+
+const handleAddCourse=()=>{
+
+addCourse(
+
+project.id,
+
+{
+
+id:Date.now(),
+
+name:courseForm.name,
+
+startDate:courseForm.startDate,
+
+endDate:courseForm.endDate,
+
+people:courseForm.people,
+
+manager:courseForm.manager,
+
+todos:[],
+
+status:"진행중"
+
+}
+
+);
+
+
+setCourseForm({
+
+name:"",
+startDate:"",
+endDate:"",
+people:0,
+manager:""
+
+});
+
+
+setShowForm(false);
+
+
+};
+
+
+const handleCancelTodo = () => {
+
+setTodoForm({
+
+title:"",
+difficulty:"보통",
+hours:0,
+startDate:"",
+endDate:""
+
+});
+
+setTodoOpen(null);
+
+};
+
+
+
+
+const handleAddTodo=(courseId:number)=>{
+
+
+if(!todoForm.title.trim())
+return;
+
+
+
+addTodo(
+
+project.id,
+
+courseId,
+
+{
+
+id:Date.now(),
+
+title:todoForm.title,
+
+completed:false,
+
+difficulty:todoForm.difficulty,
+
+hours:todoForm.hours,
+
+startDate:todoForm.startDate,
+
+endDate:todoForm.endDate
+
+}
+
+);
+
+
+
+setTodoForm({
+
+title:"",
+difficulty:"보통",
+hours:0,
+startDate:"",
+endDate:""
+
+});
+
+
+};
+
+
+
+
+
+
+return(
+
+<main className="min-h-screen bg-neutral-100 p-10">
+
+
+<h1 className="text-4xl font-bold">
+{project.name}
+</h1>
+
+
+
+
+
+<div className="mt-8 rounded-2xl bg-white p-8 shadow">
+
+<p>
+고객사 : {project.client}
+</p>
+
+<p className="mt-2">
+계약금액 :
+{project.amount.toLocaleString()}원
+</p>
+
+</div>
+
+
+
+
+
+
+
+<div className="mt-8 rounded-2xl bg-white p-8 shadow">
+
+
+<div className="flex justify-between">
+
+
+<h2 className="text-2xl font-bold">
+📌 과정 관리
+</h2>
+
+
+<button
+
+onClick={()=>setShowForm(!showForm)}
+
+className="bg-green-800 text-white rounded-lg px-5 py-3"
+
+>
+
++ 과정 추가
+
+</button>
+
+
+</div>
+
+
+
+
+
+
+{
+showForm &&
+
+<div className="mt-5 grid gap-3">
+
+
+<input
+
+className="border p-3 rounded"
+
+placeholder="과정명"
+
+value={courseForm.name}
+
+onChange={(e)=>
+setCourseForm({
+...courseForm,
+name:e.target.value
+})
+}
+
+/>
+
+
+
+<input
+
+className="border p-3 rounded"
+
+placeholder="담당자"
+
+value={courseForm.manager}
+
+onChange={(e)=>
+setCourseForm({
+...courseForm,
+manager:e.target.value
+})
+}
+
+/>
+
+
+
+<button
+
+onClick={handleAddCourse}
+
+className="bg-blue-600 text-white rounded p-3"
+
+>
+
+저장
+
+</button>
+
+
+</div>
+
+}
+
+
+
+
+
+
+
+
+
+<div className="mt-8 space-y-5">
+
+
+{
+
+project.courses?.map((course)=>(
+
+
+<div
+
+key={course.id}
+
+className="rounded-xl border bg-white p-5"
+
+>
+
+
+<h3 className="text-xl font-bold">
+{course.name}
+</h3>
+
+
+<p>
+담당자 :
+{course.manager || "-"}
+</p>
+
+
+
+
+<p className="mt-3 font-bold">
+
+진행률 :
+{calculateProgress(course.todos)}%
+
+</p>
+
+
+
+
+<div className="mt-2 h-3 rounded-full bg-neutral-200">
+
+<div
+
+className="h-3 rounded-full bg-green-700"
+
+style={{
+
+width:`${calculateProgress(course.todos)}%`
+
+}}
+
+/>
+
+</div>
+
+
+
+
+
+
+
+<div className="mt-5 border-t pt-5">
+
+
+<div className="flex justify-between">
+
+
+<h4 className="font-bold">
+📌 TO DO
+</h4>
+
+
+
+<button
+
+onClick={()=>setTodoOpen(course.id)}
+
+className="bg-green-700 text-white rounded px-3 py-2"
+
+>
+
++ TO DO
+
+</button>
+
+
+</div>
+
+
+
+
+
+
+
+{
+todoOpen===course.id &&
+
+<div className="mt-3 grid gap-2">
+
+
+<input
+
+className="border p-2 rounded"
+
+placeholder="할 일"
+
+value={todoForm.title}
+
+onChange={(e)=>
+setTodoForm({
+...todoForm,
+title:e.target.value
+})
+}
+
+/>
+
+
+
+
+<input
+
+type="date"
+
+className="border p-2 rounded"
+
+value={todoForm.startDate}
+
+onChange={(e)=>
+setTodoForm({
+...todoForm,
+startDate:e.target.value
+})
+}
+
+/>
+
+
+
+
+<input
+
+type="date"
+
+className="border p-2 rounded"
+
+value={todoForm.endDate}
+
+onChange={(e)=>
+setTodoForm({
+...todoForm,
+endDate:e.target.value
+})
+}
+
+/>
+
+
+
+
+
+<select
+
+className="border p-2 rounded"
+
+value={todoForm.difficulty}
+
+onChange={(e)=>
+setTodoForm({
+...todoForm,
+difficulty:e.target.value
+})
+}
+
+>
+
+<option>쉬움</option>
+<option>보통</option>
+<option>어려움</option>
+
+</select>
+
+
+
+
+
+
+<input
+
+type="number"
+
+className="border p-2 rounded"
+
+placeholder="예상시간"
+
+value={todoForm.hours}
+
+onChange={(e)=>
+setTodoForm({
+...todoForm,
+hours:Number(e.target.value)
+})
+}
+
+/>
+
+
+
+
+<div className="flex gap-2">
+
+
+<button
+
+onClick={()=>handleAddTodo(course.id)}
+
+className="flex-1 bg-blue-600 text-white rounded p-2"
+
+>
+
+추가
+
+</button>
+
+
+
+<button
+
+onClick={handleCancelTodo}
+
+className="flex-1 bg-neutral-400 text-white rounded p-2"
+
+>
+
+취소
+
+</button>
+
+
+</div>
+
+
+
+</div>
+
+}
+
+
+
+
+
+
+
+
+
+<div className="mt-5 space-y-2">
+
+
+{
+
+course.todos?.map((todo)=>(
+
+
+<div
+
+key={todo.id}
+
+className="bg-neutral-100 rounded p-3"
+
+>
+
+
+<label>
+
+
+<input
+
+type="checkbox"
+
+checked={todo.completed}
+
+onChange={()=>updateTodo(
+
+project.id,
+
+course.id,
+
+{
+
+...todo,
+
+completed:!todo.completed
+
+}
+
+)}
+
+ />
+
+<span className="ml-2">
+
+{todo.title}
+
+</span>
+
+
+</label>
+
+
+
+
+<p className="text-sm text-neutral-500">
+
+실행기간 :
+
+{todo.startDate || "-"}
+
+~
+
+{todo.endDate || "-"}
+
+</p>
+
+
+
+
+<p className="text-sm text-neutral-500">
+
+난이도 :
+{todo.difficulty}
+
+&nbsp; / &nbsp;
+
+예상시간 :
+{todo.hours}시간
+
+</p>
+
+
+
+
+<button
+
+onClick={()=>deleteTodo(
+
+project.id,
+
+course.id,
+
+todo.id
+
+)}
+
+className="text-red-600 text-sm"
+
+>
+
+삭제
+
+</button>
+
+
+
+</div>
+
+
+))
+
+
+}
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<button
+
+onClick={()=>deleteCourse(
+
+project.id,
+
+course.id
+
+)}
+
+className="mt-5 bg-red-600 text-white px-4 py-2 rounded"
+
+>
+
+과정 삭제
+
+</button>
+
+
+
+</div>
+
+
+))
+
+
+}
+
+
+</div>
+
+
+
+</div>
+
+
+
+</main>
+
+)
+
+
+}
