@@ -38,14 +38,15 @@ export default function EditProjectPage() {
   const handleSubmit = () => {
 
 
-    updateProject({
-      id: Number(id),
-      name,
-      client,
-      amount,
-      progress,
-      status,
-    });
+ updateProject({
+  id: Number(id),
+  name,
+  client,
+  amount,
+  progress,
+  status,
+  courses: project.courses,
+});
 
 
     router.push("/projects");
