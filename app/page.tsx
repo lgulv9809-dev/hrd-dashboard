@@ -4,11 +4,8 @@ import { useProjects } from "@/context/ProjectContext";
 import { useClients } from "@/context/ClientContext";
 import { useEducations } from "@/context/EducationContext";
 
-
 import SummaryCard from "@/components/SummaryCard";
 import TodoList from "@/components/TodoList";
-
-
 
 
 export default function Home() {
@@ -25,20 +22,17 @@ export default function Home() {
 
 
   const activeProjects = projects.filter(
-    (project) => project.status === "진행중"
+    (project) => project.status !== "완료"
   ).length;
 
 
   return (
     <main className="flex min-h-screen bg-neutral-100">
 
- 
-
 
       <div className="flex-1 p-10">
 
 
-        {/* 제목 */}
         <div className="mb-10">
 
           <h1 className="text-4xl font-bold text-neutral-900">
@@ -53,8 +47,6 @@ export default function Home() {
         </div>
 
 
-
-        {/* 현황 카드 */}
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
 
@@ -86,8 +78,6 @@ export default function Home() {
         </div>
 
 
-
-        {/* 오늘 해야 할 일 */}
 
         <TodoList />
 
