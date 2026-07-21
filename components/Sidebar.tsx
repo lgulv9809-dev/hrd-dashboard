@@ -39,7 +39,7 @@ export default function Sidebar() {
 
 
       <h1 className="text-2xl font-bold text-green-800">
-        LIM Expert
+        Expert Cunsulting
       </h1>
 
 
