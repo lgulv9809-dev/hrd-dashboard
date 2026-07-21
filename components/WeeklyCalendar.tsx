@@ -23,7 +23,6 @@ export default function WeeklyCalendar(){
     useState(new Date());
 
 
-
   const [schedules,setSchedules] =
     useState<PersonalSchedule[]>([]);
 
@@ -32,16 +31,14 @@ export default function WeeklyCalendar(){
   const [newTitle,setNewTitle] =
     useState("");
 
-
-
   const [selectedDate,setSelectedDate] =
     useState("");
 
 
 
-  // 날짜 관리 모달
   const [openDate,setOpenDate] =
     useState<string|null>(null);
+
 
 
   const [modalTitle,setModalTitle] =
@@ -51,10 +48,8 @@ export default function WeeklyCalendar(){
 
 
 
-
-
+  // 저장된 개인 일정 불러오기
   useEffect(()=>{
-
 
     const saved =
       localStorage.getItem(
@@ -70,26 +65,18 @@ export default function WeeklyCalendar(){
 
     }
 
-
   },[]);
 
 
 
 
-
-
-
+  // 개인 일정 저장
   useEffect(()=>{
 
-
     localStorage.setItem(
-
       "personalSchedules",
-
       JSON.stringify(schedules)
-
     );
-
 
   },[schedules]);
 
@@ -98,10 +85,7 @@ export default function WeeklyCalendar(){
 
 
 
-
-
-
-  const days = [
+  const days=[
     "월",
     "화",
     "수",
@@ -115,7 +99,7 @@ export default function WeeklyCalendar(){
 
 
 
-
+  // 현재 주 날짜 계산
 
   const dates = days.map((_,index)=>{
 
@@ -135,7 +119,7 @@ export default function WeeklyCalendar(){
       -
       day
       +
-      (day === 0 ? -6 : 1);
+      (day===0 ? -6 : 1);
 
 
 
@@ -146,7 +130,6 @@ export default function WeeklyCalendar(){
 
     return date;
 
-
   });
 
 
@@ -156,19 +139,23 @@ export default function WeeklyCalendar(){
 
 
 
+  // 과정 데이터
 
- const weeklyCourses = projects.flatMap(project =>
+  const weeklyCourses =
+    projects.flatMap(project =>
 
-  project.courses?.map(course => ({
 
-    ...course,
+      project.courses?.map(course=>({
 
-    projectName: project.name
+        ...course,
 
-  })) || []
+        projectName:
+          project.name
 
-);
+      })) || []
 
+
+    );
 
 
 
@@ -191,7 +178,6 @@ export default function WeeklyCalendar(){
 
     setCurrentDate(date);
 
-
   };
 
 
@@ -201,11 +187,12 @@ export default function WeeklyCalendar(){
 
 
 
+  // 개인 일정 추가
 
   const addSchedule=()=>{
 
 
-    if(!newTitle || !selectedDate)
+    if(!newTitle.trim() || !selectedDate)
       return;
 
 
@@ -241,67 +228,6 @@ export default function WeeklyCalendar(){
 
 
 
-
-  const deleteSchedule=(id:number)=>{
-
-
-    setSchedules(prev=>
-
-      prev.filter(
-        schedule=>
-        schedule.id!==id
-      )
-
-    );
-
-  };
-
-
-
-
-
-
-
-
-
-  const updateSchedule=(id:number,title:string)=>{
-
-
-    setSchedules(prev=>
-
-      prev.map(schedule=>
-
-        schedule.id===id
-
-        ?
-
-        {
-
-          ...schedule,
-
-          title
-
-        }
-
-        :
-
-        schedule
-
-      )
-
-    );
-
-
-  };
-
-
-
-
-
-
-
-
-
   const addModalSchedule=()=>{
 
 
@@ -329,6 +255,64 @@ export default function WeeklyCalendar(){
 
     setModalTitle("");
 
+  };
+
+
+
+
+
+
+
+
+  const updateSchedule=(id:number,title:string)=>{
+
+
+    setSchedules(prev=>
+
+      prev.map(schedule=>
+
+
+        schedule.id===id
+
+        ?
+
+        {
+
+          ...schedule,
+
+          title
+
+        }
+
+        :
+
+        schedule
+
+
+      )
+
+    );
+
+  };
+
+
+
+
+
+
+
+
+  const deleteSchedule=(id:number)=>{
+
+
+    setSchedules(prev=>
+
+      prev.filter(
+        schedule=>
+        schedule.id!==id
+      )
+
+    );
 
   };
 
@@ -340,27 +324,17 @@ export default function WeeklyCalendar(){
 
 
 
-
-
   return (
-
 
     <div className="rounded-2xl bg-white p-6 shadow">
 
 
-
-
-
-      <div className="mb-5 flex items-center justify-between">
-
+      <div className="mb-5 flex justify-between items-center">
 
 
         <h2 className="text-2xl font-bold">
-
           주간 일정
-
         </h2>
-
 
 
 
@@ -369,30 +343,25 @@ export default function WeeklyCalendar(){
 
           <button
 
-            onClick={()=>moveWeek(-7)}
+          onClick={()=>moveWeek(-7)}
 
-            className="rounded-lg bg-neutral-200 px-3 py-2"
+          className="rounded bg-neutral-200 px-3 py-2"
 
           >
-
             ◀
-
           </button>
 
 
 
           <button
 
-            onClick={()=>moveWeek(7)}
+          onClick={()=>moveWeek(7)}
 
-            className="rounded-lg bg-neutral-200 px-3 py-2"
+          className="rounded bg-neutral-200 px-3 py-2"
 
           >
-
             ▶
-
           </button>
-
 
 
         </div>
@@ -405,176 +374,161 @@ export default function WeeklyCalendar(){
 
 
 
-
-
-
       <div className="grid grid-cols-5 gap-3">
 
 
-
       {
-        days.map((day,index)=>(
+      days.map((day,index)=>(
 
 
-          <div
+        <div
 
+        key={day}
 
-          key={day}
+        onDoubleClick={()=>{
 
 
-          onDoubleClick={()=>{
+          const date =
 
+          `${dates[index].getFullYear()}-${
 
-            const date =
+            String(
+              dates[index].getMonth()+1
+            ).padStart(2,"0")
 
-            `${dates[index].getFullYear()}-${
+          }-${
 
-              String(
-                dates[index].getMonth()+1
-              ).padStart(2,"0")
+            String(
+              dates[index].getDate()
+            ).padStart(2,"0")
 
-            }-${
+          }`;
 
-              String(
-                dates[index].getDate()
-              ).padStart(2,"0")
 
-            }`;
+          setOpenDate(date);
 
 
+        }}
 
-            setOpenDate(date);
 
+        className="min-h-[180px] cursor-pointer rounded-xl border p-4"
 
-          }}
+        >
 
 
 
-          className="min-h-[180px] rounded-xl border p-4 cursor-pointer"
+          <p className="font-bold">
+            {day}
+          </p>
 
-          >
 
+          <p className="mt-2 text-neutral-500">
 
+            {dates[index].getMonth()+1}월{" "}
+            {dates[index].getDate()}일
 
-            <p className="font-bold">
+          </p>
 
-              {day}
 
-            </p>
 
 
 
+          <div className="mt-4 space-y-2"></div>
 
-            <p className="mt-2 text-neutral-500">
 
-              {dates[index].getMonth()+1}월{" "}
+                   {/* 진행 과정 표시 */}
 
-              {dates[index].getDate()}일
+            {
+            weeklyCourses
 
-            </p>
+            .filter(course=>{
 
 
+              if(
+                !course.startDate ||
+                !course.endDate
+              )
+              return false;
 
 
 
+              const start =
+                new Date(course.startDate);
 
 
-            <div className="mt-4 space-y-2">
+              const end =
+                new Date(course.endDate);
 
 
 
+              const target =
+                new Date(dates[index]);
 
 
 
+              start.setHours(0,0,0,0);
 
+              target.setHours(0,0,0,0);
 
-{/* 진행 과정 */}
+              end.setHours(23,59,59,999);
 
-{
-weeklyCourses
-.filter(course=>{
 
-{
-weeklyCourses
-.filter(course=>{
 
-  if(!course.startDate || !course.endDate)
-    return false;
 
+              return (
 
-  const start =
-    new Date(course.startDate);
+                target >= start
 
-  start.setHours(0,0,0,0);
+                &&
 
+                target <= end
 
-  const end =
-    new Date(course.endDate);
+              );
 
-  end.setHours(23,59,59,999);
 
+            })
 
-  const day =
-    new Date(dates[index]);
 
-  day.setHours(12,0,0,0);
+            .map(course=>(
 
 
-  return day >= start && day <= end;
+              <div
 
+              key={course.id}
 
-})
-.map(course=>(
+              className="rounded-lg bg-green-100 p-2 text-sm"
 
-<div
-key={course.id}
-className="rounded-lg bg-green-100 p-2 text-sm"
->
+              >
 
-<p className="font-bold">
-{course.name}
-</p>
 
+                <p className="font-bold">
 
-<p className="text-xs text-neutral-600">
-{course.projectName}
-</p>
+                  {course.name}
 
+                </p>
 
-</div>
 
-))
-}
+                <p className="text-xs text-neutral-600">
 
-})
-.map(course=>(
+                  {course.projectName}
 
-  <div
-    key={course.id}
-    className="rounded-lg bg-green-100 p-2 text-sm"
-  >
+                </p>
 
-    <p className="font-bold">
-      {course.name}
-    </p>
 
-    <p className="text-xs text-neutral-600">
-      {course.projectName}
-    </p>
+              </div>
 
-  </div>
 
-))
-}
+            ))
 
 
+            }
 
 
 
 
 
+            {/* 개인 일정 표시 */}
 
-            {/* 개인 일정 */}
 
             {
 
@@ -583,30 +537,37 @@ className="rounded-lg bg-green-100 p-2 text-sm"
             .filter(schedule=>{
 
 
-              const date =
+              const scheduleDate =
                 new Date(schedule.date);
 
 
 
-             return (
+              return (
 
-date.getFullYear()
-===
-dates[index].getFullYear()
 
-&&
+                scheduleDate.getFullYear()
+                ===
+                dates[index].getFullYear()
 
-date.getMonth()
-===
-dates[index].getMonth()
 
-&&
+                &&
 
-date.getDate()
-===
-dates[index].getDate()
 
-);
+                scheduleDate.getMonth()
+                ===
+                dates[index].getMonth()
+
+
+                &&
+
+
+                scheduleDate.getDate()
+                ===
+                dates[index].getDate()
+
+
+
+              );
 
 
             })
@@ -623,7 +584,6 @@ dates[index].getDate()
 
               >
 
-
                 <p className="font-bold text-pink-700">
 
                   {schedule.title}
@@ -636,18 +596,18 @@ dates[index].getDate()
 
             ))
 
+
             }
-
-
-
-            </div>
 
 
 
           </div>
 
 
-        ))
+      
+
+
+      ))
 
       }
 
@@ -666,10 +626,11 @@ dates[index].getDate()
 
 
 
-      {/* 날짜 더블클릭 모달 */}
+      {/* 날짜 더블클릭 관리 모달 */}
 
 
       {
+
       openDate && (
 
 
@@ -689,6 +650,7 @@ dates[index].getDate()
 
 
 
+
           <div className="mt-5 space-y-3">
 
 
@@ -696,10 +658,12 @@ dates[index].getDate()
 
           schedules
 
-          .filter(
-            schedule=>
+          .filter(schedule=>
+
             schedule.date===openDate
+
           )
+
 
           .map(schedule=>(
 
@@ -713,9 +677,8 @@ dates[index].getDate()
             >
 
 
-              <input
 
-              className="flex-1 rounded border p-2"
+              <input
 
               value={schedule.title}
 
@@ -731,7 +694,11 @@ dates[index].getDate()
 
               }
 
+              className="flex-1 rounded border p-2"
+
               />
+
+
 
 
               <button
@@ -747,10 +714,12 @@ dates[index].getDate()
               </button>
 
 
+
             </div>
 
 
           ))
+
 
           }
 
@@ -762,21 +731,22 @@ dates[index].getDate()
 
 
 
-
           <div className="mt-5 flex gap-2">
 
 
             <input
 
-            className="flex-1 rounded border p-2"
-
-            placeholder="새 일정"
-
             value={modalTitle}
 
             onChange={(e)=>
+
               setModalTitle(e.target.value)
+
             }
+
+            placeholder="새 일정"
+
+            className="flex-1 rounded border p-2"
 
             />
 
@@ -796,6 +766,7 @@ dates[index].getDate()
 
 
           </div>
+
 
 
 
@@ -841,7 +812,11 @@ dates[index].getDate()
 
 
 
-      {/* 개인 일정 추가 */}
+
+
+
+
+      {/* 개인 일정 빠른 추가 */}
 
 
       <div className="mt-6 rounded-xl bg-neutral-50 p-4">
@@ -858,6 +833,7 @@ dates[index].getDate()
         <div className="flex gap-3">
 
 
+
           <input
 
           type="date"
@@ -865,12 +841,16 @@ dates[index].getDate()
           value={selectedDate}
 
           onChange={(e)=>
+
             setSelectedDate(e.target.value)
+
           }
 
-          className="rounded-lg border p-2"
+          className="rounded border p-2"
 
           />
+
+
 
 
 
@@ -879,14 +859,19 @@ dates[index].getDate()
           value={newTitle}
 
           onChange={(e)=>
+
             setNewTitle(e.target.value)
+
           }
 
           placeholder="예) 연차, 팀점, 외근"
 
-          className="flex-1 rounded-lg border p-2"
+          className="flex-1 rounded border p-2"
 
           />
+
+
+
 
 
 
@@ -894,13 +879,15 @@ dates[index].getDate()
 
           onClick={addSchedule}
 
-          className="rounded-lg bg-green-800 px-5 text-white"
+          className="rounded bg-green-800 px-5 text-white"
 
           >
 
           추가
 
           </button>
+
+
 
 
         </div>
@@ -917,5 +904,4 @@ dates[index].getDate()
 
   );
 
-
-}
+}   
