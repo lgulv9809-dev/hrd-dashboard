@@ -464,25 +464,62 @@ className="bg-neutral-500 text-white rounded p-3"
 [...(project.courses ?? [])]
 .sort((a,b)=>{
 
+  const today = new Date();
+
+
   const aProgress = calculateProgress(a.todos);
   const bProgress = calculateProgress(b.todos);
 
-  // 100% 완료 과정은 아래로
+
+
+  const aStart = new Date(
+    a.startDate || "9999-12-31"
+  );
+
+  const bStart = new Date(
+    b.startDate || "9999-12-31"
+  );
+
+
+
+  // 완료 과정은 맨 아래
   if(aProgress === 100 && bProgress !== 100){
     return 1;
   }
+
 
   if(aProgress !== 100 && bProgress === 100){
     return -1;
   }
 
 
-  // 시작일 기준 오름차순
+
+
+  const aStarted = aStart < today;
+  const bStarted = bStart < today;
+
+
+
+  // 이미 시작한 과정은 아래
+  if(aStarted && !bStarted){
+    return 1;
+  }
+
+
+  if(!aStarted && bStarted){
+    return -1;
+  }
+
+
+
+
+  // 시작일 가까운 순
   return (
-    new Date(a.startDate || "9999-12-31").getTime()
+    aStart.getTime()
     -
-    new Date(b.startDate || "9999-12-31").getTime()
+    bStart.getTime()
   );
+
 
 })
 .map((course)=>(
