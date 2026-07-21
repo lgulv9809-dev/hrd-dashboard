@@ -651,7 +651,7 @@ export default function WeeklyCalendar(){
 
 
 
-          <div className="mt-5 space-y-3">
+          <div className="mt-8 space-y-8">
 
 
           {
