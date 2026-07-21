@@ -17,15 +17,33 @@ type Todo = {
 };
 
 
+
+
 type TodoContextType = {
+
   todos: Todo[];
+
   addTodo: (todo: Todo)=>void;
-  deleteTodo: (id:number)=>void;
+
+  updateTodo: (
+    id:number,
+    text:string
+  )=>void;
+
+  deleteTodo: (
+    id:number
+  )=>void;
+
 };
+
+
 
 
 const TodoContext =
   createContext<TodoContextType | null>(null);
+
+
+
 
 
 
@@ -36,91 +54,212 @@ export function TodoProvider({
 }){
 
 
+
   const [todos,setTodos] =
   useState<Todo[]>([]);
 
 
 
+
+
+
   useEffect(()=>{
+
 
     const saved =
       localStorage.getItem("todos");
 
 
+
     if(saved){
-      setTodos(JSON.parse(saved));
+
+      setTodos(
+        JSON.parse(saved)
+      );
+
     }
+
 
   },[]);
 
 
 
+
+
+
+
   useEffect(()=>{
 
+
     localStorage.setItem(
+
       "todos",
+
       JSON.stringify(todos)
+
     );
+
 
   },[todos]);
 
 
 
 
+
+
+
+
+
   const addTodo=(todo:Todo)=>{
 
+
     setTodos((prev)=>[
+
       ...prev,
+
       todo
+
     ]);
+
 
   };
 
 
+
+
+
+
+
+
+
+  // Todo 수정
+
+  const updateTodo=(
+
+    id:number,
+
+    text:string
+
+  )=>{
+
+
+    setTodos((prev)=>
+
+      prev.map(todo=>
+
+        todo.id === id
+
+        ?
+
+        {
+
+          ...todo,
+
+          text
+
+        }
+
+        :
+
+        todo
+
+      )
+
+    );
+
+
+  };
+
+
+
+
+
+
+
+
+
+  // Todo 삭제
 
   const deleteTodo=(id:number)=>{
 
+
     setTodos((prev)=>
+
       prev.filter(
-        (todo)=>todo.id!==id
+
+        todo=>
+
+        todo.id !== id
+
       )
+
     );
 
+
   };
+
+
+
+
+
 
 
 
   return(
+
     <TodoContext.Provider
+
       value={{
+
         todos,
+
         addTodo,
+
+        updateTodo,
+
         deleteTodo,
+
       }}
+
     >
 
       {children}
 
     </TodoContext.Provider>
+
   );
+
 
 }
 
 
 
+
+
+
+
 export function useTodos(){
 
+
   const context =
-    useContext(TodoContext);
+
+  useContext(TodoContext);
+
 
 
   if(!context){
+
     throw new Error(
+
       "useTodos must be used inside TodoProvider"
+
     );
+
   }
 
 
+
   return context;
+
 
 }

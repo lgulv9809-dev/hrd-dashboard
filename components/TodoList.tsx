@@ -30,12 +30,12 @@ export default function TodoList() {
 
 
 
+
   const handleAdd = ()=>{
 
 
     if(!text.trim())
       return;
-
 
 
     addTodo({
@@ -49,16 +49,12 @@ export default function TodoList() {
     });
 
 
-
     setText("");
 
   };
 
 
 
-
-
-  const today = new Date();
 
 
 
@@ -68,51 +64,23 @@ export default function TodoList() {
     project.courses?.flatMap(course =>
 
 
-      course.todos?.filter(todo=>{
+      course.todos?.map(todo=>({
 
-
-        if(!todo.startDate)
-          return false;
-
-
-
-        const todoDate =
-          new Date(todo.startDate);
-
-
-
-        return (
-
-          todoDate.getDate()
-          ===
-          today.getDate()
-
-          &&
-
-          todoDate.getMonth()
-          ===
-          today.getMonth()
-
-          &&
-
-          todoDate.getFullYear()
-          ===
-          today.getFullYear()
-
-        );
-
-
-      }).map(todo=>({
 
         ...todo,
 
+
         projectName: project.name,
+
 
         courseName: course.name,
 
+
         projectId: project.id,
 
+
         courseId: course.id
+
 
       })) || []
 
@@ -121,6 +89,7 @@ export default function TodoList() {
 
 
   );
+
 
 
 
@@ -137,6 +106,7 @@ export default function TodoList() {
         오늘 해야 할 일
 
       </h2>
+
 
 
 
@@ -197,7 +167,8 @@ export default function TodoList() {
 
 
 
-        {/* 프로젝트 과정 TO DO */}
+
+        {/* 프로젝트 Todo */}
 
         {
           projectTodos.map(todo=>(
@@ -217,7 +188,9 @@ export default function TodoList() {
 
 
 
-                <label className="flex items-center gap-3">
+
+
+                <div className="flex items-center gap-3">
 
 
 
@@ -237,7 +210,7 @@ export default function TodoList() {
 
                       ...todo,
 
-                      completed: !todo.completed
+                      completed:!todo.completed
 
                     }
 
@@ -247,76 +220,78 @@ export default function TodoList() {
 
 
 
-                  <div>
-
-
-                    {
-                      editingId === todo.id ? (
-
-
-                        <div className="flex gap-2">
-
-
-                          <input
-
-                          className="rounded border px-2 py-1"
-
-                          value={editText}
-
-                          onChange={(e)=>
-                            setEditText(e.target.value)
-                          }
-
-                          />
-
-
-                          <button
-
-                          className="rounded bg-green-700 px-3 py-1 text-sm text-white"
-
-                          onClick={()=>{
-
-
-                            updateTodo(
-
-                              todo.projectId,
-
-                              todo.courseId,
-
-                              {
-
-                                ...todo,
-
-                                title:editText
-
-                              }
-
-                            );
-
-
-                            setEditingId(null);
-
-
-                          }}
-
-                          >
-
-                          저장
-
-                          </button>
 
 
 
-                        </div>
+                  {
+                    editingId === todo.id ? (
 
 
-
-                      )
-
-                      :
+                      <div className="flex gap-2">
 
 
-                      (
+                        <input
+
+                        className="rounded border px-2 py-1"
+
+                        value={editText}
+
+                        onChange={(e)=>
+
+                          setEditText(e.target.value)
+
+                        }
+
+                        />
+
+
+                        <button
+
+                        className="rounded bg-green-700 px-3 py-1 text-sm text-white"
+
+                        onClick={()=>{
+
+
+                          updateTodo(
+
+                            todo.projectId,
+
+                            todo.courseId,
+
+                            {
+
+                              ...todo,
+
+                              title:editText
+
+                            }
+
+                          );
+
+
+                          setEditingId(null);
+
+
+                        }}
+
+                        >
+
+                        저장
+
+                        </button>
+
+
+                      </div>
+
+
+                    )
+
+                    :
+
+                    (
+
+                      <div>
+
 
                         <p className="font-bold">
 
@@ -325,35 +300,35 @@ export default function TodoList() {
                         </p>
 
 
-                      )
+                        <p className="text-sm text-neutral-500">
 
-                    }
+                          {todo.projectName}
 
+                          {" / "}
 
+                          {todo.courseName}
 
-
-
-                    <p className="text-sm text-neutral-500">
-
-                      {todo.projectName}
-
-                      {" / "}
-
-                      {todo.courseName}
-
-                    </p>
+                        </p>
 
 
-                  </div>
+                      </div>
+
+                    )
+
+                  }
 
 
-                </label>
+
+                </div>
+
+
 
 
 
 
                 {
                   editingId !== todo.id && (
+
 
                     <button
 
@@ -374,6 +349,7 @@ export default function TodoList() {
                     수정
 
                     </button>
+
 
                   )
                 }
@@ -396,6 +372,8 @@ export default function TodoList() {
 
 
 
+
+
         {
           todos.length === 0 &&
           projectTodos.length === 0 && (
@@ -411,8 +389,9 @@ export default function TodoList() {
 
 
 
-
       </div>
+
+
 
 
 
@@ -424,7 +403,6 @@ export default function TodoList() {
 
 
       <div className="mt-6 flex gap-3 border-t pt-5">
-
 
 
         <input
@@ -451,8 +429,6 @@ export default function TodoList() {
 
 
 
-
-
         <button
 
         onClick={handleAdd}
@@ -461,13 +437,13 @@ export default function TodoList() {
 
         >
 
-          추가
+        추가
 
         </button>
 
 
-
       </div>
+
 
 
 

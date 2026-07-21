@@ -93,7 +93,9 @@ manager:""
 
 });
 
+const [editTodoId,setEditTodoId]=useState<number|null>(null);
 
+const [editTodoTitle,setEditTodoTitle]=useState("");
 
 const [todoOpen,setTodoOpen]=useState<number|null>(null);
 const [todoForm,setTodoForm]=useState({
@@ -872,11 +874,79 @@ completed:!todo.completed
 
  />
 
+{
+editTodoId === todo.id ? (
+
+<div className="flex gap-2 ml-2">
+
+
+<input
+
+className="border rounded px-2 py-1"
+
+value={editTodoTitle}
+
+onChange={(e)=>
+setEditTodoTitle(e.target.value)
+}
+
+/>
+
+
+<button
+
+className="bg-green-700 text-white px-3 py-1 rounded"
+
+onClick={()=>{
+
+
+updateTodo(
+
+project.id,
+
+course.id,
+
+{
+
+...todo,
+
+title:editTodoTitle
+
+}
+
+);
+
+
+setEditTodoId(null);
+
+
+}}
+
+>
+
+저장
+
+</button>
+
+
+</div>
+
+
+)
+
+:
+
+(
+
 <span className="ml-2">
 
 {todo.title}
 
 </span>
+
+)
+
+}
 
 
 </label>
@@ -911,7 +981,23 @@ completed:!todo.completed
 
 </p>
 
+<button
 
+onClick={()=>{
+
+setEditTodoId(todo.id);
+
+setEditTodoTitle(todo.title);
+
+}}
+
+className="text-blue-600 text-sm mr-3"
+
+>
+
+수정
+
+</button>
 
 
 <button
