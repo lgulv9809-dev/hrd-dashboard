@@ -24,6 +24,10 @@ export default function TodoList() {
 
   const [text,setText] = useState("");
 
+  const [editingId,setEditingId] = useState<number | null>(null);
+
+  const [editText,setEditText] = useState("");
+
 
 
   const handleAdd = ()=>{
@@ -121,6 +125,8 @@ export default function TodoList() {
 
 
 
+
+
   return (
 
     <div className="mt-10 rounded-2xl bg-white p-6 shadow-sm border border-neutral-200">
@@ -135,7 +141,10 @@ export default function TodoList() {
 
 
 
+
       <div className="mt-6 space-y-3">
+
+
 
 
 
@@ -186,7 +195,9 @@ export default function TodoList() {
 
 
 
-        {/* 과정별 TO DO */}
+
+
+        {/* 프로젝트 과정 TO DO */}
 
         {
           projectTodos.map(todo=>(
@@ -201,61 +212,176 @@ export default function TodoList() {
             >
 
 
-              <label className="flex items-center gap-3">
 
-
-                <input
-
-                type="checkbox"
-
-                checked={todo.completed}
-
-                onChange={()=>updateTodo(
-
-                  todo.projectId,
-
-                  todo.courseId,
-
-                  {
-
-                    ...todo,
-
-                    completed: !todo.completed
-
-                  }
-
-                )}
-
-                />
+              <div className="flex items-center justify-between">
 
 
 
-                <div>
-
-
-                  <p className="font-bold">
-
-                    {todo.title}
-
-                  </p>
+                <label className="flex items-center gap-3">
 
 
 
-                  <p className="text-sm text-neutral-500">
+                  <input
 
-                    {todo.projectName}
+                  type="checkbox"
 
-                    {" / "}
+                  checked={todo.completed}
 
-                    {todo.courseName}
+                  onChange={()=>updateTodo(
 
-                  </p>
+                    todo.projectId,
+
+                    todo.courseId,
+
+                    {
+
+                      ...todo,
+
+                      completed: !todo.completed
+
+                    }
+
+                  )}
+
+                  />
 
 
-                </div>
+
+                  <div>
 
 
-              </label>
+                    {
+                      editingId === todo.id ? (
+
+
+                        <div className="flex gap-2">
+
+
+                          <input
+
+                          className="rounded border px-2 py-1"
+
+                          value={editText}
+
+                          onChange={(e)=>
+                            setEditText(e.target.value)
+                          }
+
+                          />
+
+
+                          <button
+
+                          className="rounded bg-green-700 px-3 py-1 text-sm text-white"
+
+                          onClick={()=>{
+
+
+                            updateTodo(
+
+                              todo.projectId,
+
+                              todo.courseId,
+
+                              {
+
+                                ...todo,
+
+                                title:editText
+
+                              }
+
+                            );
+
+
+                            setEditingId(null);
+
+
+                          }}
+
+                          >
+
+                          저장
+
+                          </button>
+
+
+
+                        </div>
+
+
+
+                      )
+
+                      :
+
+
+                      (
+
+                        <p className="font-bold">
+
+                          {todo.title}
+
+                        </p>
+
+
+                      )
+
+                    }
+
+
+
+
+
+                    <p className="text-sm text-neutral-500">
+
+                      {todo.projectName}
+
+                      {" / "}
+
+                      {todo.courseName}
+
+                    </p>
+
+
+                  </div>
+
+
+                </label>
+
+
+
+
+                {
+                  editingId !== todo.id && (
+
+                    <button
+
+                    className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
+
+                    onClick={()=>{
+
+
+                      setEditingId(todo.id);
+
+                      setEditText(todo.title);
+
+
+                    }}
+
+                    >
+
+                    수정
+
+                    </button>
+
+                  )
+                }
+
+
+
+              </div>
+
 
 
             </div>
@@ -263,6 +389,7 @@ export default function TodoList() {
 
           ))
         }
+
 
 
 
@@ -291,9 +418,13 @@ export default function TodoList() {
 
 
 
+
+
       {/* 새 업무 추가 */}
 
+
       <div className="mt-6 flex gap-3 border-t pt-5">
+
 
 
         <input
@@ -320,6 +451,8 @@ export default function TodoList() {
 
 
 
+
+
         <button
 
         onClick={handleAdd}
@@ -331,6 +464,7 @@ export default function TodoList() {
           추가
 
         </button>
+
 
 
       </div>
