@@ -38,14 +38,14 @@ export default function EditProjectPage() {
   const handleSubmit = () => {
 
 
- updateProject({
+updateProject({
   id: Number(id),
   name,
   client,
   amount,
   progress,
   status,
-  courses: project.courses,
+  courses: project?.courses ?? [],
 });
 
 
