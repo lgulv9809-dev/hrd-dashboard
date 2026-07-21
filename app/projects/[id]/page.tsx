@@ -472,17 +472,7 @@ className="bg-neutral-500 text-white rounded p-3"
 
 
 
-  const aStart = new Date(
-    a.startDate || "9999-12-31"
-  );
-
-  const bStart = new Date(
-    b.startDate || "9999-12-31"
-  );
-
-
-
-  // 완료 과정은 맨 아래
+  // 완료 과정 최하단
   if(aProgress === 100 && bProgress !== 100){
     return 1;
   }
@@ -494,26 +484,61 @@ className="bg-neutral-500 text-white rounded p-3"
 
 
 
+  const aStart = new Date(
+    a.startDate || "9999-12-31"
+  );
 
-  const aStarted = aStart < today;
-  const bStarted = bStart < today;
+  const bStart = new Date(
+    b.startDate || "9999-12-31"
+  );
+
+
+  const aEnd = new Date(
+    a.endDate || "9999-12-31"
+  );
+
+  const bEnd = new Date(
+    b.endDate || "9999-12-31"
+  );
 
 
 
-  // 이미 시작한 과정은 아래
-  if(aStarted && !bStarted){
+  const aFinished =
+    aEnd < today;
+
+  const bFinished =
+    bEnd < today;
+
+
+
+  // 둘 다 이미 지난 교육
+  // → 최근 종료 순
+  if(aFinished && bFinished){
+
+    return (
+      bEnd.getTime()
+      -
+      aEnd.getTime()
+    );
+
+  }
+
+
+
+  // 지난 교육은 아래로
+  if(aFinished && !bFinished){
     return 1;
   }
 
 
-  if(!aStarted && bStarted){
+  if(!aFinished && bFinished){
     return -1;
   }
 
 
 
-
-  // 시작일 가까운 순
+  // 진행중/예정 교육
+  // → 시작일 가까운 순
   return (
     aStart.getTime()
     -
