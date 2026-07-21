@@ -27,8 +27,7 @@ export default function EditProjectPage() {
   const [amount, setAmount] =
     useState(project?.amount || 0);
 
-  const [progress, setProgress] =
-    useState(project?.progress || 0);
+
 
   const [status, setStatus] =
     useState(project?.status || "진행중");
@@ -43,7 +42,7 @@ updateProject({
   name,
   client,
   amount,
-  progress,
+  progress: project?.progress ?? 0,
   status,
   courses: project?.courses ?? [],
 });
@@ -94,13 +93,7 @@ updateProject({
         />
 
 
-        <input
-          className="mb-4 w-full rounded-lg border p-3"
-          type="number"
-          value={progress}
-          onChange={(e)=>setProgress(Number(e.target.value))}
-          placeholder="진행률"
-        />
+        
 
 
         <select

@@ -125,7 +125,41 @@ const [projects,setProjects] =
   useState<Project[]>(initialProjects);
 
 
+function calculateCourseProgress(todos: Todo[]) {
 
+  if (todos.length === 0)
+    return 0;
+
+  const completed =
+    todos.filter(todo => todo.completed).length;
+
+  return Math.round(
+    (completed / todos.length) * 100
+  );
+
+}
+
+function calculateProjectProgress(courses: Course[]) {
+
+  if (courses.length === 0)
+    return 0;
+
+  const total =
+    courses.reduce(
+
+      (sum, course) =>
+
+        sum + calculateCourseProgress(course.todos),
+
+      0
+
+    );
+
+  return Math.round(
+    total / courses.length
+  );
+
+}
 
 
 // 기존 데이터 보정
@@ -521,45 +555,48 @@ return project;
 
 
 
-return {
-
-...project,
-
-
-courses:
+const updatedCourses =
 
 project.courses.map((course)=>{
 
+  if(course.id !== courseId)
+    return course;
 
-if(course.id !== courseId)
-return course;
+  return {
 
+    ...course,
 
+    todos:
+
+    course.todos.map((item)=>
+
+      item.id === todo.id
+      ? todo
+      : item
+
+    )
+
+  };
+
+});
+
+const progress =
+  calculateProjectProgress(updatedCourses);
 
 return {
 
-...course,
+  ...project,
 
+  courses: updatedCourses,
 
-todos:
+  progress,
 
-course.todos.map((item)=>
-
-item.id === todo.id
-? todo
-: item
-
-)
-
+  status:
+    progress === 100
+      ? "완료"
+      : "진행중",
 
 };
-
-
-})
-
-
-};
-
 
 })
 
