@@ -23,7 +23,7 @@ export default function Header() {
     pathname === "/"
       ? "나의 대시보드🏠"
       : pathname.includes("projects")
-      ? "용역관리"
+      ? "진행중인 과정관리"
       : pathname.includes("clients")
       ? "고객사관리"
       : pathname.includes("education")

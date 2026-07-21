@@ -35,13 +35,27 @@ type Course = {
 type Project = {
   id: number;
   name: string;
+
   client: string;
+
+  managerName: string;
+  phone: string;
+  email: string;
+
   amount: number;
   progress: number;
   status: string;
+
+
+  // 추가
+  annual?: boolean;
+  multiRound?: boolean;
+
+    startDate?: string;
+  endDate?: string;
+
   courses: Course[];
 };
-
 
 
 
@@ -180,28 +194,51 @@ useEffect(()=>{
 
 
     const updatedProjects =
-      parsedProjects.map((project:any)=>({
+parsedProjects.map((project:any)=>({
+
+  ...project,
 
 
-        ...project,
+  managerName:
+    project.managerName ?? "",
 
 
-        courses:
-          (project.courses ?? [])
-          .map((course:any)=>({
+  phone:
+    project.phone ?? "",
 
 
-            ...course,
+  email:
+    project.email ?? "",
 
 
-            todos:
-              course.todos ?? []
+  annual:
+    project.annual ?? false,
 
 
-          }))
+  multiRound:
+    project.multiRound ?? false,
+
+      startDate:
+    project.startDate ?? "",
 
 
-      }));
+  endDate:
+    project.endDate ?? "",
+
+
+  courses:
+    (project.courses ?? [])
+    .map((course:any)=>({
+
+      ...course,
+
+      todos:
+        course.todos ?? []
+
+    }))
+
+
+}));
 
 
 

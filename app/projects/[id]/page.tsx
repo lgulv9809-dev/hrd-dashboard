@@ -21,6 +21,30 @@ function calculateProgress(todos:any[]) {
 }
 
 
+function calculateDifficulty(todos:any[]) {
+
+  const count = todos?.length || 0;
+
+
+  if(count >= 15){
+
+    return "상";
+
+  }
+
+
+  if(count >= 5){
+
+    return "중";
+
+  }
+
+
+  return "하";
+
+}
+
+
 
 export default function ProjectDetailPage(){
 
@@ -32,6 +56,7 @@ const {id}=useParams();
 const {
  projects,
  addCourse,
+ updateCourse,
  deleteCourse,
  addTodo,
  deleteTodo,
@@ -48,7 +73,15 @@ projects.find(
 
 
 const [showForm,setShowForm]=useState(false);
+const [openCourse,setOpenCourse]=useState<number|null>(null);
+const [editCourseId,setEditCourseId]=useState<number|null>(null);
 
+const [editCourseForm,setEditCourseForm]=useState({
+  name:"",
+  manager:"",
+  startDate:"",
+  endDate:""
+});
 
 const [courseForm,setCourseForm]=useState({
 
@@ -218,14 +251,42 @@ return(
 
 <div className="mt-8 rounded-2xl bg-white p-8 shadow">
 
+
 <p>
 고객사 : {project.client}
 </p>
+
+
+<p className="mt-2">
+담당자 : {project.managerName}
+</p>
+
+
+<p className="mt-2">
+전화번호 : {project.phone}
+</p>
+
+
+<p className="mt-2">
+메일주소 : {project.email}
+</p>
+
 
 <p className="mt-2">
 계약금액 :
 {project.amount.toLocaleString()}원
 </p>
+
+
+<p className="mt-2">
+상태 : {project.status}
+</p>
+
+
+<p className="mt-2">
+진행률 : {project.progress}%
+</p>
+
 
 </div>
 
@@ -308,7 +369,40 @@ manager:e.target.value
 
 />
 
+<input
 
+type="date"
+
+className="border p-3 rounded"
+
+value={courseForm.startDate}
+
+onChange={(e)=>
+setCourseForm({
+...courseForm,
+startDate:e.target.value
+})
+}
+
+/>
+
+
+<input
+
+type="date"
+
+className="border p-3 rounded"
+
+value={courseForm.endDate}
+
+onChange={(e)=>
+setCourseForm({
+...courseForm,
+endDate:e.target.value
+})
+}
+
+/>
 
 <button
 
@@ -322,7 +416,31 @@ className="bg-blue-600 text-white rounded p-3"
 
 </button>
 
+<button
 
+onClick={()=>{
+
+  setShowForm(false);
+
+  setCourseForm({
+
+    name:"",
+    startDate:"",
+    endDate:"",
+    people:0,
+    manager:""
+
+  });
+
+}}
+
+className="bg-neutral-500 text-white rounded p-3"
+
+>
+
+취소
+
+</button>
 </div>
 
 }
@@ -340,8 +458,32 @@ className="bg-blue-600 text-white rounded p-3"
 
 {
 
-project.courses?.map((course)=>(
 
+[...(project.courses ?? [])]
+.sort((a,b)=>{
+
+  const aProgress = calculateProgress(a.todos);
+  const bProgress = calculateProgress(b.todos);
+
+  // 100% 완료 과정은 아래로
+  if(aProgress === 100 && bProgress !== 100){
+    return 1;
+  }
+
+  if(aProgress !== 100 && bProgress === 100){
+    return -1;
+  }
+
+
+  // 시작일 기준 오름차순
+  return (
+    new Date(a.startDate || "9999-12-31").getTime()
+    -
+    new Date(b.startDate || "9999-12-31").getTime()
+  );
+
+})
+.map((course)=>(
 
 <div
 
@@ -352,10 +494,99 @@ className="rounded-xl border bg-white p-5"
 >
 
 
-<h3 className="text-xl font-bold">
-{course.name}
-</h3>
+<div className="flex justify-between items-center">
 
+<div className="flex items-center gap-3">
+
+  <h3 className="text-xl font-bold">
+    {course.name}
+  </h3>
+
+
+<span
+  className={`
+    flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-white
+    ${
+      calculateDifficulty(course.todos) === "상"
+      ? "bg-red-500"
+      : calculateDifficulty(course.todos) === "중"
+      ? "bg-yellow-400"
+      : "bg-green-500"
+    }
+  `}
+>
+  {calculateDifficulty(course.todos)}
+</span>
+
+</div>
+
+
+
+<div className="flex gap-2">
+
+
+<button
+
+onClick={()=>{
+
+setEditCourseId(course.id);
+
+setEditCourseForm({
+
+name:course.name,
+
+manager:course.manager || "",
+
+startDate:course.startDate || "",
+
+endDate:course.endDate || ""
+
+});
+
+}}
+
+className="rounded-lg bg-yellow-500 px-4 py-2 text-white"
+
+>
+
+수정
+
+</button>
+
+
+<button
+
+onClick={()=>setOpenCourse(
+  openCourse === course.id
+  ? null
+  : course.id
+)}
+
+className="rounded-lg bg-blue-600 px-4 py-2 text-white"
+
+>
+
+{
+openCourse === course.id
+? "닫기"
+: "할일보기"
+}
+
+</button>
+
+
+</div>
+
+</div>
+
+<p className="mt-2 text-sm text-neutral-500">
+
+기간 :
+{course.startDate || "-"}
+~
+{course.endDate || "-"}
+
+</p>
 
 <p>
 담당자 :
@@ -395,8 +626,8 @@ width:`${calculateProgress(course.todos)}%`
 
 
 
-
-
+{
+openCourse === course.id && (
 <div className="mt-5 border-t pt-5">
 
 
@@ -595,8 +826,14 @@ className="flex-1 bg-neutral-400 text-white rounded p-2"
 
 
 {
-
-course.todos?.map((todo)=>(
+[...(course.todos ?? [])]
+.sort(
+  (a,b)=>
+    new Date(a.startDate || "9999-12-31").getTime()
+    -
+    new Date(b.startDate || "9999-12-31").getTime()
+)
+.map((todo)=>(
 
 
 <div
@@ -707,6 +944,10 @@ className="text-red-600 text-sm"
 
 }
 
+</div>
+
+
+
 
 </div>
 
@@ -714,13 +955,95 @@ className="text-red-600 text-sm"
 
 
 
+)}
+{
+editCourseId === course.id && (
+
+<div className="mt-5 grid gap-3 border-t pt-5">
+
+<input
+className="border p-3 rounded"
+placeholder="과정명"
+value={editCourseForm.name}
+onChange={(e)=>
+setEditCourseForm({
+...editCourseForm,
+name:e.target.value
+})
+}
+/>
+
+
+<input
+className="border p-3 rounded"
+placeholder="담당자"
+value={editCourseForm.manager}
+onChange={(e)=>
+setEditCourseForm({
+...editCourseForm,
+manager:e.target.value
+})
+}
+/>
+
+
+<input
+type="date"
+className="border p-3 rounded"
+value={editCourseForm.startDate}
+onChange={(e)=>
+setEditCourseForm({
+...editCourseForm,
+startDate:e.target.value
+})
+}
+/>
+
+
+<input
+type="date"
+className="border p-3 rounded"
+value={editCourseForm.endDate}
+onChange={(e)=>
+setEditCourseForm({
+...editCourseForm,
+endDate:e.target.value
+})
+}
+/>
+
+
+<button
+
+onClick={()=>{
+
+updateCourse(
+
+project.id,
+
+course.id,
+
+editCourseForm
+
+);
+
+setEditCourseId(null);
+
+}}
+
+className="bg-blue-600 text-white rounded p-3"
+
+>
+
+저장
+
+</button>
+
 </div>
 
-
-
-
-
-
+)
+}
+<div className="flex justify-end mt-5">
 
 <button
 
@@ -732,13 +1055,15 @@ course.id
 
 )}
 
-className="mt-5 bg-red-600 text-white px-4 py-2 rounded"
+className="bg-red-600 text-white px-4 py-2 rounded"
 
 >
 
 과정 삭제
 
 </button>
+
+</div>
 
 
 

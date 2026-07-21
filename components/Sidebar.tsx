@@ -13,25 +13,15 @@ export default function Sidebar() {
       href: "/",
     },
     {
-      name: "📂 용역관리",
+      name: "📂 진행중인 과정관리",
       href: "/projects",
     },
     {
-      name: "✅ 완료과정관리",
+      name: "✅ 완료된 과정관리",
       href: "/completed",
     },
-    {
-      name: "🏢 고객사관리",
-      href: "/clients",
-    },
-    {
-      name: "🎓 교육관리",
-      href: "/education",
-    },
-    {
-      name: "📊 통계",
-      href: "/stats",
-    },
+ 
+    
   ];
 
   return (
