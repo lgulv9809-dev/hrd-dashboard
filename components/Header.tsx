@@ -8,15 +8,15 @@ export default function Header() {
   const pathname = usePathname();
 
 
-  const today =
-    new Date().toLocaleDateString(
-      "ko-KR",
-      {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }
-    );
+  const today = new Date().toLocaleDateString(
+  "ko-KR",
+  {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  }
+);
 
 
   const title =
