@@ -14,27 +14,19 @@ export default function NewProjectPage() {
   const [email, setEmail] = useState("");
   const [amount, setAmount] = useState(0);
   const [status, setStatus] = useState("진행중");
+
+
   const [startDate, setStartDate] = useState("");
-
-const [endDate, setEndDate] = useState("");
-
+  const [endDate, setEndDate] = useState("");
 
 
-  // 용역 유형
   const [annual, setAnnual] = useState(false);
   const [multiRound, setMultiRound] = useState(false);
-
-
-  // 용역 기간 추가
-  const [startMonth, setStartMonth] = useState("");
-  const [endMonth, setEndMonth] = useState("");
 
 
 
   const { addProject } = useProjects();
   const router = useRouter();
-
-
 
 
 
@@ -54,8 +46,8 @@ const [endDate, setEndDate] = useState("");
           새로운 프로젝트 정보를 등록합니다.
         </p>
 
-      </div>
 
+      </div>
 
 
 
@@ -65,8 +57,6 @@ const [endDate, setEndDate] = useState("");
 
 
         <div className="space-y-5">
-
-
 
 
 
@@ -95,8 +85,6 @@ const [endDate, setEndDate] = useState("");
 
 
 
-
-
           <div>
 
             <label className="text-sm text-neutral-500">
@@ -117,7 +105,6 @@ const [endDate, setEndDate] = useState("");
             />
 
 
-
             <input
 
               className="mt-3 w-full rounded-lg border p-3"
@@ -129,7 +116,6 @@ const [endDate, setEndDate] = useState("");
               onChange={(e)=>setManagerName(e.target.value)}
 
             />
-
 
 
             <input
@@ -145,7 +131,6 @@ const [endDate, setEndDate] = useState("");
             />
 
 
-
             <input
 
               className="mt-3 w-full rounded-lg border p-3"
@@ -158,10 +143,7 @@ const [endDate, setEndDate] = useState("");
 
             />
 
-
           </div>
-
-
 
 
 
@@ -180,108 +162,36 @@ const [endDate, setEndDate] = useState("");
 
               type="number"
 
-              placeholder="금액 입력"
-
               value={amount}
 
               onChange={(e)=>setAmount(Number(e.target.value))}
 
             />
 
-
           </div>
 
-<div>
-
-<label className="text-sm text-neutral-500">
-  용역 시작일
-</label>
-
-<input
-
-className="mt-2 w-full rounded-lg border p-3"
-
-type="date"
-
-value={startDate}
-
-onChange={(e)=>setStartDate(e.target.value)}
-
-/>
-
-</div>
 
 
 
-<div>
-
-<label className="text-sm text-neutral-500">
-  용역 종료일
-</label>
-
-<input
-
-className="mt-2 w-full rounded-lg border p-3"
-
-type="date"
-
-value={endDate}
-
-onChange={(e)=>setEndDate(e.target.value)}
-
-/>
-
-</div>
-
-
-
-
-
-          {/* 용역 기간 */}
 
           <div>
 
             <label className="text-sm text-neutral-500">
-              용역 기간
+              용역 시작일
             </label>
 
 
-            <div className="mt-3 flex gap-3">
+            <input
 
+              className="mt-2 w-full rounded-lg border p-3"
 
-              <input
+              type="date"
 
-                type="month"
+              value={startDate}
 
-                className="w-full rounded-lg border p-3"
+              onChange={(e)=>setStartDate(e.target.value)}
 
-                value={startMonth}
-
-                onChange={(e)=>setStartMonth(e.target.value)}
-
-              />
-
-
-              <span className="flex items-center">
-                ~
-              </span>
-
-
-              <input
-
-                type="month"
-
-                className="w-full rounded-lg border p-3"
-
-                value={endMonth}
-
-                onChange={(e)=>setEndMonth(e.target.value)}
-
-              />
-
-
-            </div>
-
+            />
 
           </div>
 
@@ -289,10 +199,30 @@ onChange={(e)=>setEndDate(e.target.value)}
 
 
 
+          <div>
+
+            <label className="text-sm text-neutral-500">
+              용역 종료일
+            </label>
+
+
+            <input
+
+              className="mt-2 w-full rounded-lg border p-3"
+
+              type="date"
+
+              value={endDate}
+
+              onChange={(e)=>setEndDate(e.target.value)}
+
+            />
+
+          </div>
 
 
 
-          {/* 용역 유형 */}
+
 
           <div>
 
@@ -305,7 +235,6 @@ onChange={(e)=>setEndDate(e.target.value)}
 
 
               <label className="flex items-center gap-2">
-
 
                 <input
 
@@ -327,7 +256,6 @@ onChange={(e)=>setEndDate(e.target.value)}
 
               <label className="flex items-center gap-2">
 
-
                 <input
 
                   type="checkbox"
@@ -343,7 +271,6 @@ onChange={(e)=>setEndDate(e.target.value)}
               </label>
 
 
-
             </div>
 
 
@@ -353,11 +280,7 @@ onChange={(e)=>setEndDate(e.target.value)}
 
 
 
-
-
-
           <div>
-
 
             <label className="text-sm text-neutral-500">
               상태
@@ -395,8 +318,6 @@ onChange={(e)=>setEndDate(e.target.value)}
 
 
 
-
-
           <button
 
             onClick={()=>{
@@ -420,24 +341,15 @@ onChange={(e)=>setEndDate(e.target.value)}
 
                 status,
 
-progress:0,
+                progress:0,
 
+                startDate,
 
-startDate,
+                endDate,
 
-endDate,
-
-
-annual,
+                annual,
 
                 multiRound,
-
-
-                // 추가
-                startMonth,
-
-                endMonth,
-
 
                 courses:[]
 
@@ -458,7 +370,6 @@ annual,
             등록하기
 
           </button>
-
 
 
 

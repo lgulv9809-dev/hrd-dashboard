@@ -1016,15 +1016,13 @@ endDate:e.target.value
 <button
 
 onClick={()=>{
-
 updateCourse(
-
-project.id,
-
-course.id,
-
-editCourseForm
-
+  project.id,
+  {
+    ...course,
+    ...editCourseForm,
+    id: course.id
+  }
 );
 
 setEditCourseId(null);

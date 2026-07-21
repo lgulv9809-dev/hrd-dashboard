@@ -5,26 +5,16 @@ import Link from "next/link";
 type ProjectCardProps = {
 
   id:number;
-
   name:string;
-
   client:string;
-
   amount:number;
-
   status:string;
-
   courses:any[];
-
   difficulty:string;
-
-  annual?:boolean;
-
-  multiRound?:boolean;
-
+  annual:boolean;
+  multiRound:boolean;
 
   startDate?:string;
-
   endDate?:string;
 
 };
@@ -55,9 +45,8 @@ function calculateCourseProgress(todos:any[]){
 
 
 
-
-
 function calculateProjectProgress(courses:any[]){
+
 
   if(!courses || courses.length===0)
     return 0;
@@ -87,9 +76,8 @@ function calculateProjectProgress(courses:any[]){
 
 
 
-
-
 export default function ProjectCard({
+
 
 id,
 name,
@@ -103,9 +91,8 @@ multiRound,
 startDate,
 endDate
 
+
 }:ProjectCardProps){
-
-
 
 
 
@@ -116,11 +103,8 @@ deleteProject
 
 
 
-
 const progress =
 calculateProjectProgress(courses);
-
-
 
 
 
@@ -136,11 +120,7 @@ return (
 
 
 
-
-
 <div className="flex items-center gap-3 flex-wrap">
-
-
 
 
 
@@ -154,10 +134,6 @@ return (
 
 
 
-
-
-
-{/* 용역 난이도 */}
 
 <span
 
@@ -201,19 +177,16 @@ difficulty==="중"
 
 
 
-{/* 연간 표시 */}
-
 {
-
 annual && (
 
 <span
 
-className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white"
+className="rounded-full bg-blue-500 px-3 py-1 text-xs font-bold text-white"
 
 >
 
-연
+연간
 
 </span>
 
@@ -227,22 +200,16 @@ className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 tex
 
 
 
-
-
-
-{/* 다차수 표시 */}
-
 {
-
 multiRound && (
 
 <span
 
-className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 text-xs font-bold text-white"
+className="rounded-full bg-purple-500 px-3 py-1 text-xs font-bold text-white"
 
 >
 
-다
+다차수
 
 </span>
 
@@ -253,8 +220,6 @@ className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 t
 
 
 </div>
-
-
 
 
 
@@ -276,22 +241,28 @@ className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 t
 
 
 
+<p className="mt-2 text-neutral-500">
 
-{/* 용역 기간 */}
+계약금액 :
+{amount.toLocaleString()}원
+
+</p>
+
+
+
+
+
+
 
 {
-
-(startMonth || endMonth) && (
+(startDate || endDate) && (
 
 <p className="mt-2 text-neutral-500">
 
 기간 :
-
-{startMonth?.replace("-", ".")}
-
+{startDate || "-"}
 ~
-
-{endMonth?.replace("-", ".")}
+{endDate || "-"}
 
 </p>
 
@@ -305,33 +276,12 @@ className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 t
 
 
 
-
-
-<p className="mt-2 text-neutral-500">
-
-계약금액 :
-
-{amount.toLocaleString()}원
-
-</p>
-
-
-
-
-
-
-
-
-
 <p className="mt-4 font-bold">
 
 전체 진행률 :
-
 {progress}%
 
 </p>
-
-
 
 
 
@@ -344,18 +294,13 @@ className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 t
 
 <div
 
-
 className="h-3 rounded-full bg-green-700"
-
 
 style={{
 
-
 width:`${progress}%`
 
-
 }}
-
 
 />
 
@@ -368,13 +313,9 @@ width:`${progress}%`
 
 
 
-
-
-
 <p className="mt-4 text-sm text-green-700">
 
 상태 :
-
 {status}
 
 </p>
@@ -385,13 +326,7 @@ width:`${progress}%`
 
 
 
-
-
-
-
 <div className="mt-5 flex gap-3">
-
-
 
 
 
@@ -431,8 +366,6 @@ className="rounded-lg bg-indigo-600 px-4 py-2 text-white"
 
 
 
-
-
 <button
 
 onClick={()=>deleteProject(id)}
@@ -448,11 +381,7 @@ className="rounded-lg bg-red-600 px-4 py-2 text-white"
 
 
 
-
-
 </div>
-
-
 
 
 

@@ -1,120 +1,185 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
 import { projects as initialProjects } from "@/data/projects";
 
 
 
 type Todo = {
-  id: number;
-  title: string;
-  completed: boolean;
-  difficulty: string;
-  hours: number;
-  startDate: string;
-  endDate: string;
+
+  id:number;
+
+  title:string;
+
+  completed:boolean;
+
+  difficulty:string;
+
+  hours:number;
+
+  startDate:string;
+
+  endDate:string;
+
 };
+
+
 
 
 
 type Course = {
-  id: number;
-  name: string;
-  startDate: string;
-  endDate: string;
-  people: number;
-  manager: string;
 
-  todos: Todo[];
+  id:number;
 
-  status: string;
+  name:string;
+
+  startDate:string;
+
+  endDate:string;
+
+  people:number;
+
+  manager:string;
+
+  todos:Todo[];
+
+  status:string;
+
 };
+
+
 
 
 
 type Project = {
-  id: number;
-  name: string;
 
-  client: string;
+  id:number;
 
-  managerName: string;
-  phone: string;
-  email: string;
+  name:string;
 
-  amount: number;
-  progress: number;
-  status: string;
+  client:string;
 
 
-  // 용역 기간
-  startDate?: string;
-  endDate?: string;
+  managerName?:string;
+
+  phone?:string;
+
+  email?:string;
 
 
-  // 용역 유형
-  annual?: boolean;
-  multiRound?: boolean;
+  amount:number;
+
+  progress:number;
+
+  status:string;
 
 
-  courses: Course[];
+  startDate?:string;
+
+  endDate?:string;
+
+
+  annual?:boolean;
+
+  multiRound?:boolean;
+
+
+  courses:Course[];
+
 };
+
+
+
 
 
 
 
 type ProjectContextType = {
 
-  projects: Project[];
 
-  addProject: (project: Project) => void;
-
-  deleteProject: (id:number) => void;
-
-  updateProject: (project:Project) => void;
+  projects:Project[];
 
 
+  addProject:(project:Project)=>void;
 
-  addCourse: (
+
+  deleteProject:(id:number)=>void;
+
+
+  updateProject:(project:Project)=>void;
+
+
+
+  addCourse:(
+
     projectId:number,
+
     course:Course
-  ) => void;
+
+  )=>void;
 
 
-  updateCourse: (
+
+  updateCourse:(
+
     projectId:number,
+
     course:Course
-  ) => void;
+
+  )=>void;
 
 
-  deleteCourse: (
+
+  deleteCourse:(
+
     projectId:number,
+
     courseId:number
-  ) => void;
+
+  )=>void;
 
 
 
-  addTodo: (
+  addTodo:(
+
     projectId:number,
+
     courseId:number,
+
     todo:Todo
-  ) => void;
+
+  )=>void;
 
 
 
-  updateTodo: (
+  updateTodo:(
+
     projectId:number,
+
     courseId:number,
+
     todo:Todo
-  ) => void;
+
+  )=>void;
 
 
 
-  deleteTodo: (
+  deleteTodo:(
+
     projectId:number,
+
     courseId:number,
+
     todoId:number
-  ) => void;
+
+  )=>void;
+
 
 };
 
@@ -122,8 +187,13 @@ type ProjectContextType = {
 
 
 
+
+
 const ProjectContext =
-  createContext<ProjectContextType | null>(null);
+
+createContext<ProjectContextType | null>(null);
+
+
 
 
 
@@ -131,123 +201,176 @@ const ProjectContext =
 
 
 export function ProjectProvider({
-  children,
+
+children,
+
 }:{
-  children:React.ReactNode;
-}) {
+
+children:React.ReactNode;
+
+}){
 
 
 
 const [projects,setProjects] =
-  useState<Project[]>(initialProjects);
+
+useState<Project[]>(initialProjects);
 
 
-function calculateCourseProgress(todos: Todo[]) {
 
-  if (todos.length === 0)
-    return 0;
 
-  const completed =
-    todos.filter(todo => todo.completed).length;
 
-  return Math.round(
-    (completed / todos.length) * 100
-  );
 
-}
 
-function calculateProjectProgress(courses: Course[]) {
+function calculateCourseProgress(
+todos:Todo[]
+){
 
-  if (courses.length === 0)
-    return 0;
+if(!todos || todos.length===0)
 
-  const total =
-    courses.reduce(
+return 0;
 
-      (sum, course) =>
 
-        sum + calculateCourseProgress(course.todos),
 
-      0
+const completed =
 
-    );
+todos.filter(
+(todo)=>todo.completed
+).length;
 
-  return Math.round(
-    total / courses.length
-  );
+
+
+return Math.round(
+
+(completed / todos.length) * 100
+
+);
 
 }
 
 
-// 기존 데이터 보정
+
+
+
+
+function calculateProjectProgress(
+courses:Course[]
+){
+
+if(!courses || courses.length===0)
+
+return 0;
+
+
+
+const total =
+
+courses.reduce(
+
+(sum,course)=>
+
+sum + calculateCourseProgress(course.todos),
+
+0
+
+);
+
+
+
+return Math.round(
+
+total / courses.length
+
+);
+
+}
+
+
+
+
+
+
+
+
+
 useEffect(()=>{
 
 
-  const savedProjects =
-    localStorage.getItem("projects");
+const saved =
+
+localStorage.getItem("projects");
 
 
 
-  if(savedProjects){
+if(saved){
 
 
-    const parsedProjects =
-      JSON.parse(savedProjects);
+const parsed =
+
+JSON.parse(saved);
 
 
 
-    const updatedProjects =
-parsedProjects.map((project:any)=>({
+const fixed =
 
-  ...project,
+parsed.map((project:any)=>({
 
-
-  managerName:
-    project.managerName ?? "",
+...project,
 
 
-  phone:
-    project.phone ?? "",
+managerName:
+project.managerName ?? "",
 
 
-  email:
-    project.email ?? "",
+phone:
+project.phone ?? "",
 
 
-  annual:
-    project.annual ?? false,
+email:
+project.email ?? "",
 
 
-  multiRound:
-    project.multiRound ?? false,
-
-      startDate:
-    project.startDate ?? "",
+startDate:
+project.startDate ?? "",
 
 
-  endDate:
-    project.endDate ?? "",
+endDate:
+project.endDate ?? "",
 
 
-  courses:
-    (project.courses ?? [])
-    .map((course:any)=>({
+annual:
+project.annual ?? false,
 
-      ...course,
 
-      todos:
-        course.todos ?? []
+multiRound:
+project.multiRound ?? false,
 
-    }))
+
+courses:
+
+(project.courses ?? [])
+
+.map((course:any)=>({
+
+
+...course,
+
+
+todos:
+course.todos ?? []
+
+
+}))
 
 
 }));
 
 
 
-    setProjects(updatedProjects);
+setProjects(fixed);
 
-  }
+}
+
 
 
 },[]);
@@ -257,14 +380,19 @@ parsedProjects.map((project:any)=>({
 
 
 
-// 저장
+
+
+
 useEffect(()=>{
 
 
-  localStorage.setItem(
-    "projects",
-    JSON.stringify(projects)
-  );
+localStorage.setItem(
+
+"projects",
+
+JSON.stringify(projects)
+
+);
 
 
 },[projects]);
@@ -276,15 +404,19 @@ useEffect(()=>{
 
 
 
-// 용역 추가
+
 const addProject =
+
 (project:Project)=>{
 
 
-  setProjects((prev)=>[
-    ...prev,
-    project
-  ]);
+setProjects(prev=>[
+
+...prev,
+
+project
+
+]);
 
 
 };
@@ -296,17 +428,23 @@ const addProject =
 
 
 
-// 용역 삭제
+
 const deleteProject =
+
 (id:number)=>{
 
 
-  setProjects((prev)=>
-    prev.filter(
-      (project)=>
-        project.id !== id
-    )
-  );
+setProjects(prev=>
+
+prev.filter(
+
+(project)=>
+
+project.id !== id
+
+)
+
+);
 
 
 };
@@ -318,69 +456,25 @@ const deleteProject =
 
 
 
-// 용역 수정
+
 const updateProject =
+
 (project:Project)=>{
 
 
-  setProjects((prev)=>
+setProjects(prev=>
 
-    prev.map((item)=>
+prev.map(item=>
 
-      item.id === project.id
-      ? project
-      : item
-
-    )
-
-  );
-
-
-};
-
-
-
-
-
-
-
-
-
-// 과정 추가
-const addCourse =
-(
- projectId:number,
- course:Course
-)=>{
-
-
-setProjects((prev)=>
-
-prev.map((project)=>
-
-
-project.id === projectId
+item.id===project.id
 
 ?
 
-{
-
- ...project,
-
-
- courses:[
-   ...project.courses,
-   course
- ]
-
-
-}
-
+project
 
 :
 
-project
-
+item
 
 )
 
@@ -397,20 +491,19 @@ project
 
 
 
-// 과정 수정
-const updateCourse =
+const addCourse =
+
 (
- projectId:number,
- course:Course
+projectId:number,
+course:Course
 )=>{
 
 
-setProjects((prev)=>
+setProjects(prev=>
 
-prev.map((project)=>
+prev.map(project=>
 
-
-project.id === projectId
+project.id===projectId
 
 ?
 
@@ -418,25 +511,76 @@ project.id === projectId
 
 ...project,
 
+courses:[
+
+...project.courses,
+
+course
+
+]
+
+}
+
+:
+
+project
+
+)
+
+);
+
+
+};
+
+
+
+
+
+
+
+
+
+const updateCourse =
+
+(
+projectId:number,
+course:Course
+)=>{
+
+
+setProjects(prev=>
+
+prev.map(project=>
+
+project.id===projectId
+
+?
+
+{
+
+...project,
 
 courses:
 
-project.courses.map((item)=>
+project.courses.map(item=>
 
-item.id === course.id
-? course
-: item
+item.id===course.id
+
+?
+
+course
+
+:
+
+item
 
 )
 
-
 }
-
 
 :
 
 project
-
 
 )
 
@@ -453,43 +597,41 @@ project
 
 
 
-// 과정 삭제
 const deleteCourse =
+
 (
- projectId:number,
- courseId:number
+projectId:number,
+courseId:number
 )=>{
 
 
-setProjects((prev)=>
+setProjects(prev=>
 
-prev.map((project)=>
+prev.map(project=>
 
-
-project.id === projectId
+project.id===projectId
 
 ?
 
 {
 
 ...project,
-
 
 courses:
 
 project.courses.filter(
-(course)=>
-course.id !== courseId
+
+course=>
+
+course.id!==courseId
+
 )
 
-
 }
-
 
 :
 
 project
-
 
 )
 
@@ -506,48 +648,55 @@ project
 
 
 
-// TO DO 추가
 const addTodo =
+
 (
- projectId:number,
- courseId:number,
- todo:Todo
+projectId:number,
+courseId:number,
+todo:Todo
 )=>{
 
 
-setProjects((prev)=>
+setProjects(prev=>
 
-prev.map((project)=>{
+prev.map(project=>{
 
 
-if(project.id !== projectId)
+if(project.id!==projectId)
+
 return project;
 
 
 
 return {
 
+
 ...project,
 
 
 courses:
 
-project.courses.map((course)=>{
+project.courses.map(course=>{
 
 
-if(course.id !== courseId)
+if(course.id!==courseId)
+
 return course;
 
 
 
 return {
 
+
 ...course,
 
 
 todos:[
- ...course.todos,
- todo
+
+...course.todos,
+
+todo
+
 ]
 
 
@@ -576,67 +725,97 @@ todos:[
 
 
 
-// TO DO 수정
 const updateTodo =
+
 (
- projectId:number,
- courseId:number,
- todo:Todo
+projectId:number,
+courseId:number,
+todo:Todo
 )=>{
 
 
-setProjects((prev)=>
+setProjects(prev=>
 
-prev.map((project)=>{
+prev.map(project=>{
 
 
-if(project.id !== projectId)
+if(project.id!==projectId)
+
 return project;
 
 
 
-const updatedCourses =
+const courses =
 
-project.courses.map((course)=>{
+project.courses.map(course=>{
 
-  if(course.id !== courseId)
-    return course;
 
-  return {
+if(course.id!==courseId)
 
-    ...course,
+return course;
 
-    todos:
 
-    course.todos.map((item)=>
-
-      item.id === todo.id
-      ? todo
-      : item
-
-    )
-
-  };
-
-});
-
-const progress =
-  calculateProjectProgress(updatedCourses);
 
 return {
 
-  ...project,
+...course,
 
-  courses: updatedCourses,
+todos:
 
-  progress,
+course.todos.map(item=>
 
-  status:
-    progress === 100
-      ? "완료"
-      : "진행중",
+item.id===todo.id
+
+?
+
+todo
+
+:
+
+item
+
+)
 
 };
+
+
+});
+
+
+
+const progress =
+
+calculateProjectProgress(courses);
+
+
+
+return {
+
+
+...project,
+
+
+courses,
+
+
+progress,
+
+
+status:
+
+progress===100
+
+?
+
+"완료"
+
+:
+
+"진행중"
+
+
+};
+
 
 })
 
@@ -654,41 +833,45 @@ return {
 
 
 
-// TO DO 삭제
 const deleteTodo =
+
 (
- projectId:number,
- courseId:number,
- todoId:number
+projectId:number,
+courseId:number,
+todoId:number
 )=>{
 
 
-setProjects((prev)=>
+setProjects(prev=>
 
-prev.map((project)=>{
+prev.map(project=>{
 
 
-if(project.id !== projectId)
+if(project.id!==projectId)
+
 return project;
 
 
 
 return {
 
+
 ...project,
 
 
 courses:
 
-project.courses.map((course)=>{
+project.courses.map(course=>{
 
 
-if(course.id !== courseId)
+if(course.id!==courseId)
+
 return course;
 
 
 
 return {
+
 
 ...course,
 
@@ -696,8 +879,11 @@ return {
 todos:
 
 course.todos.filter(
-(todo)=>
-todo.id !== todoId
+
+todo=>
+
+todo.id!==todoId
+
 )
 
 
@@ -726,7 +912,6 @@ todo.id !== todoId
 
 
 
-
 return (
 
 <ProjectContext.Provider
@@ -742,20 +927,17 @@ deleteProject,
 
 updateProject,
 
-
 addCourse,
 
 updateCourse,
 
 deleteCourse,
 
-
 addTodo,
 
 updateTodo,
 
 deleteTodo,
-
 
 }}
 
@@ -768,6 +950,7 @@ deleteTodo,
 
 </ProjectContext.Provider>
 
+
 );
 
 
@@ -779,10 +962,12 @@ deleteTodo,
 
 
 
+
 export function useProjects(){
 
 
 const context =
+
 useContext(ProjectContext);
 
 
@@ -790,7 +975,9 @@ useContext(ProjectContext);
 if(!context){
 
 throw new Error(
+
 "useProjects must be used inside ProjectProvider"
+
 );
 
 }

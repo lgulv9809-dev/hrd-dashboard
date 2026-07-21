@@ -71,14 +71,14 @@ const [endDate,setEndDate] =
       setStatus(project.status ?? "진행중");
 
 
-      setStartMonth(
-        project.startMonth ?? ""
-      );
+      setStartDate(
+  project.startDate ?? ""
+);
 
 
-      setEndMonth(
-        project.endMonth ?? ""
-      );
+setEndDate(
+  project.endDate ?? ""
+);
 
     }
 
@@ -304,17 +304,17 @@ updateProject({
 
             <input
 
-              type="month"
+  type="month"
 
-              className="w-full rounded-lg border p-3"
+  className="w-full rounded-lg border p-3"
 
-              value={startMonth}
+  value={startDate}
 
-              onChange={(e)=>
-                setStartMonth(e.target.value)
-              }
+  onChange={(e)=>
+    setStartDate(e.target.value)
+  }
 
-            />
+/>
 
 
             <span>
@@ -324,17 +324,17 @@ updateProject({
 
             <input
 
-              type="month"
+  type="month"
 
-              className="w-full rounded-lg border p-3"
+  className="w-full rounded-lg border p-3"
 
-              value={endMonth}
+  value={endDate}
 
-              onChange={(e)=>
-                setEndMonth(e.target.value)
-              }
+  onChange={(e)=>
+    setEndDate(e.target.value)
+  }
 
-            />
+/>
 
 
           </div>
