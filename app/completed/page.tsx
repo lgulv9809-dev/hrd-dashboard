@@ -210,19 +210,18 @@ export default function CompletedPage() {
 
 
 
-                  startMonth={
+                 startDate={
 
-                    project.startMonth ?? ""
+  project.startDate ?? ""
 
-                  }
+}
 
 
+endDate={
 
-                  endMonth={
+  project.endDate ?? ""
 
-                    project.endMonth ?? ""
-
-                  }
+} 
 
 
 
