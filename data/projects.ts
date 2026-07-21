@@ -6,6 +6,7 @@ export const projects = [
     amount: 5000000,
     progress: 70,
     status: "진행중",
+    courses: [],
   },
   {
     id: 2,
@@ -14,6 +15,7 @@ export const projects = [
     amount: 8000000,
     progress: 40,
     status: "진행중",
+    courses: [],
   },
   {
     id: 3,
@@ -22,5 +24,6 @@ export const projects = [
     amount: 3000000,
     progress: 100,
     status: "완료",
+    courses: [],
   },
 ];
