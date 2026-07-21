@@ -42,12 +42,12 @@ export default function Home() {
         <div className="mb-10">
 
           <h1 className="text-4xl font-bold text-neutral-900">
-            LIM의 EXPERT 업무관리
+            IM 업무 생산성 지표 관리 (가을)
           </h1>
 
 
           <p className="mt-2 text-neutral-500">
-            오늘도 힘든 하루가 되겠지만 해낼 수 있습니다 ! 👋
+            아자아자 👋
           </p>
 
         </div>
