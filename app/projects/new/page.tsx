@@ -116,14 +116,15 @@ return (
 
   console.log("등록 실행");
 
-  addProject({
-    id: Date.now(),
-    name,
-    client,
-    amount: Number(amount),
-    progress: Number(progress),
-    status,
-  });
+addProject({
+  id: Date.now(),
+  name,
+  client,
+  amount,
+  progress,
+  status,
+  courses: [],
+});
   router.push("/projects");
 console.log("추가 완료");
 }}
