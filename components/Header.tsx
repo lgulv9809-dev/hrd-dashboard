@@ -21,7 +21,7 @@ export default function Header() {
 
   const title =
     pathname === "/"
-      ? "대시보드"
+      ? "나의 대시보드🏠"
       : pathname.includes("projects")
       ? "용역관리"
       : pathname.includes("clients")
