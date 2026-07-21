@@ -27,6 +27,11 @@ export default function TodoList() {
   const [text,setText] = useState("");
 
 
+  const [selectedDate,setSelectedDate] =
+  useState(new Date());
+
+
+
   const [editingId,setEditingId] =
   useState<number|null>(null);
 
@@ -42,6 +47,27 @@ export default function TodoList() {
 
   const [editPersonalText,setEditPersonalText] =
   useState("");
+
+
+
+
+
+
+
+  const moveDate=(amount:number)=>{
+
+    const date = new Date(selectedDate);
+
+    date.setDate(
+      date.getDate()+amount
+    );
+
+    setSelectedDate(date);
+
+  };
+
+
+
 
 
 
@@ -74,20 +100,14 @@ export default function TodoList() {
 
 
 
-  const today = new Date();
-
-  today.setHours(0,0,0,0);
-
-
-
-
-
   // 개인 Todo
+
   const visiblePersonalTodos =
   todos.filter(todo=>{
 
     if(todo.done)
       return false;
+
 
     return true;
 
@@ -98,7 +118,10 @@ export default function TodoList() {
 
 
 
-  // 과정 Todo
+
+
+
+  // 과정 Todo 전체
 
   const projectTodos = projects.flatMap(project =>
 
@@ -126,11 +149,15 @@ export default function TodoList() {
 
         ...todo,
 
+
         projectName:project.name,
+
 
         courseName:course.name,
 
+
         projectId:project.id,
+
 
         courseId:course.id
 
@@ -138,9 +165,7 @@ export default function TodoList() {
       })) || []
 
 
-
     ) || []
-
 
 
   );
@@ -151,28 +176,58 @@ export default function TodoList() {
 
 
 
-  // 날짜순 정렬
-
-  projectTodos.sort((a,b)=>{
 
 
-    const aDate =
-    a.startDate
-    ?
-    new Date(a.startDate).getTime()
-    :
-    Infinity;
+  // 선택 날짜 Todo만
+
+  const filteredProjectTodos =
+  projectTodos.filter(todo=>{
 
 
-    const bDate =
-    b.startDate
-    ?
-    new Date(b.startDate).getTime()
-    :
-    Infinity;
+    if(!todo.startDate)
+      return false;
 
 
-    return aDate-bDate;
+
+    const todoDate =
+    new Date(todo.startDate);
+
+
+
+    return (
+
+      todoDate.getFullYear()
+      ===
+      selectedDate.getFullYear()
+
+      &&
+
+      todoDate.getMonth()
+      ===
+      selectedDate.getMonth()
+
+      &&
+
+      todoDate.getDate()
+      ===
+      selectedDate.getDate()
+
+    );
+
+
+  });
+
+
+
+
+
+
+  filteredProjectTodos.sort((a,b)=>{
+
+
+    return new Date(a.startDate).getTime()
+    -
+    new Date(b.startDate).getTime();
 
 
   });
@@ -187,17 +242,62 @@ return (
 <div className="mt-10 rounded-2xl bg-white p-6 shadow-sm border border-neutral-200">
 
 
+
+<div className="flex items-center justify-between">
+
+
 <h2 className="text-xl font-bold">
 
-오늘 해야 할 일
+{selectedDate.getMonth()+1}월 {selectedDate.getDate()}일 할 일
 
 </h2>
+
+
+
+<div className="flex gap-2">
+
+
+<button
+
+onClick={()=>moveDate(-1)}
+
+className="rounded-lg bg-neutral-200 px-3 py-1"
+
+>
+
+◀
+
+</button>
+
+
+
+<button
+
+onClick={()=>moveDate(1)}
+
+className="rounded-lg bg-neutral-200 px-3 py-1"
+
+>
+
+▶
+
+</button>
+
+
+
+</div>
+
+
+</div>
+
+
 
 
 
 
 
 <div className="mt-6 space-y-4">
+
 
 
 
@@ -279,18 +379,17 @@ setEditingPersonalId(null);
 
 (
 
-
 <span>
 
 {todo.text}
 
 </span>
 
-
 )
 
-
 }
+
+
 
 
 
@@ -340,7 +439,6 @@ className="rounded bg-red-600 px-3 py-1 text-sm text-white"
 </button>
 
 
-
 </div>
 
 
@@ -348,7 +446,6 @@ className="rounded bg-red-600 px-3 py-1 text-sm text-white"
 
 
 ))
-
 
 }
 
@@ -366,7 +463,7 @@ className="rounded bg-red-600 px-3 py-1 text-sm text-white"
 
 {
 
-projectTodos.map(todo=>(
+filteredProjectTodos.map(todo=>(
 
 
 <div
@@ -375,10 +472,12 @@ key={todo.id}
 
 className="rounded-lg bg-green-50 p-4"
 
+
 >
 
 
 <div className="flex justify-between items-center">
+
 
 
 <div className="flex items-center gap-3">
@@ -414,75 +513,6 @@ completed:!todo.completed
 
 
 
-{
-
-editingId===todo.id ? (
-
-
-<div className="flex gap-2">
-
-
-<input
-
-className="rounded border px-2 py-1"
-
-value={editText}
-
-onChange={(e)=>
-setEditText(e.target.value)
-}
-
-/>
-
-
-<button
-
-className="rounded bg-green-700 px-3 py-1 text-sm text-white"
-
-onClick={()=>{
-
-
-updateTodo(
-
-todo.projectId,
-
-todo.courseId,
-
-{
-
-...todo,
-
-title:editText
-
-}
-
-);
-
-
-setEditingId(null);
-
-
-}}
-
->
-
-저장
-
-</button>
-
-
-</div>
-
-
-)
-
-
-:
-
-
-(
-
-
 <div>
 
 
@@ -505,68 +535,18 @@ setEditingId(null);
 </p>
 
 
-
-{
-
-todo.startDate && (
-
 <p className="text-xs text-neutral-400">
 
-마감 : {todo.startDate}
+{todo.startDate}
 
 </p>
 
-)
-
-}
-
-
-
-</div>
-
-
-)
-
-
-}
-
 
 </div>
 
 
 
-
-
-
-
-{
-
-editingId!==todo.id && (
-
-
-<button
-
-onClick={()=>{
-
-setEditingId(todo.id);
-
-setEditText(todo.title);
-
-}}
-
-className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
-
->
-
-수정
-
-</button>
-
-
-)
-
-}
-
+</div>
 
 
 </div>
@@ -591,12 +571,12 @@ className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
 {
 
 visiblePersonalTodos.length===0 &&
-projectTodos.length===0 && (
+filteredProjectTodos.length===0 && (
 
 
 <p className="text-neutral-500">
 
-등록된 업무가 없습니다.
+해당 날짜의 업무가 없습니다.
 
 </p>
 
@@ -608,7 +588,6 @@ projectTodos.length===0 && (
 
 
 </div>
-
 
 
 
@@ -659,7 +638,6 @@ className="rounded-lg bg-green-800 px-5 text-white"
 </button>
 
 
-
 </div>
 
 
@@ -670,5 +648,6 @@ className="rounded-lg bg-green-800 px-5 text-white"
 
 
 );
+
 
 }
