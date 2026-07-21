@@ -8,7 +8,6 @@ export default function NewProjectPage() {
   const [name, setName] = useState("");
   const [client, setClient] = useState("");
   const [amount, setAmount] = useState(0);
-  const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState("진행중");
 
   const { addProject } = useProjects();
@@ -75,19 +74,7 @@ export default function NewProjectPage() {
           </div>
 
 
-          <div>
-            <label className="text-sm text-neutral-500">
-              진행률
-            </label>
-
-            <input
-              className="mt-2 w-full rounded-lg border p-3"
-              type="number"
-              placeholder="예) 50"
-              value={progress}
-              onChange={(e) => setProgress(Number(e.target.value))}
-            />
-          </div>
+          
 
 
           <div>
@@ -118,14 +105,14 @@ export default function NewProjectPage() {
               console.log("등록 실행");
 
               addProject({
-                id: Date.now(),
-                name,
-                client,
-                amount,
-                progress,
-                status,
-                courses: [],
-              });
+  id: Date.now(),
+  name,
+  client,
+  amount,
+  progress: 0,
+  status,
+  courses: [],
+});
 
               router.push("/projects");
 
