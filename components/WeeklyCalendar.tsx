@@ -157,31 +157,17 @@ export default function WeeklyCalendar(){
 
 
 
-  const todos = projects.flatMap(project =>
+ const weeklyCourses = projects.flatMap(project =>
 
+  project.courses?.map(course => ({
 
-    project.courses?.flatMap(course =>
+    ...course,
 
+    projectName: project.name
 
-      course.todos?.map(todo=>({
+  })) || []
 
-
-        ...todo,
-
-
-        courseName:course.name,
-
-
-        projectName:project.name
-
-
-      })) || []
-
-
-    ) || []
-
-
-  );
+);
 
 
 
@@ -502,72 +488,84 @@ export default function WeeklyCalendar(){
 
 
 
-            {/* 과정 TO DO */}
+{/* 진행 과정 */}
 
-            {
+{
+weeklyCourses
+.filter(course=>{
 
-            todos.filter(todo=>{
+{
+weeklyCourses
+.filter(course=>{
 
-
-              if(!todo.startDate)
-                return false;
-
-
-
-              const todoDate =
-                new Date(todo.startDate);
+  if(!course.startDate || !course.endDate)
+    return false;
 
 
+  const start =
+    new Date(course.startDate);
 
-              return (
-
-                todoDate.getDate()
-                ===
-                dates[index].getDate()
-
-                &&
-
-                todoDate.getMonth()
-                ===
-                dates[index].getMonth()
-
-              );
+  start.setHours(0,0,0,0);
 
 
-            })
+  const end =
+    new Date(course.endDate);
 
-            .map(todo=>(
-
-
-              <div
-
-              key={todo.id}
-
-              className="rounded-lg bg-green-100 p-2 text-sm"
-
-              >
-
-                <p className="font-bold">
-
-                  {todo.title}
-
-                </p>
+  end.setHours(23,59,59,999);
 
 
-                <p className="text-xs text-neutral-600">
+  const day =
+    new Date(dates[index]);
 
-                  {todo.courseName}
-
-                </p>
-
-
-              </div>
+  day.setHours(12,0,0,0);
 
 
-            ))
+  return day >= start && day <= end;
 
-            }
 
+})
+.map(course=>(
+
+<div
+key={course.id}
+className="rounded-lg bg-green-100 p-2 text-sm"
+>
+
+<p className="font-bold">
+{course.name}
+</p>
+
+
+<p className="text-xs text-neutral-600">
+{course.projectName}
+</p>
+
+
+</div>
+
+))
+}
+
+})
+.map(course=>(
+
+  <div
+    key={course.id}
+    className="rounded-lg bg-green-100 p-2 text-sm"
+  >
+
+    <p className="font-bold">
+      {course.name}
+    </p>
+
+    <p className="text-xs text-neutral-600">
+      {course.projectName}
+    </p>
+
+  </div>
+
+))
+}
 
 
 
@@ -590,19 +588,25 @@ export default function WeeklyCalendar(){
 
 
 
-              return (
+             return (
 
-                date.getDate()
-                ===
-                dates[index].getDate()
+date.getFullYear()
+===
+dates[index].getFullYear()
 
-                &&
+&&
 
-                date.getMonth()
-                ===
-                dates[index].getMonth()
+date.getMonth()
+===
+dates[index].getMonth()
 
-              );
+&&
+
+date.getDate()
+===
+dates[index].getDate()
+
+);
 
 
             })
