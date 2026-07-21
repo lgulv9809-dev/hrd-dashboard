@@ -21,8 +21,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AAAA_TEST_12345",
-  description: "TEST",
+  title: "EXPERT IM 업무관리",
+  description: "담당 과정 및 업무 진행 관리시스템",
 };
 
 export default function RootLayout({
