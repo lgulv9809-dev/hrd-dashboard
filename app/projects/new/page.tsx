@@ -14,6 +14,10 @@ export default function NewProjectPage() {
   const [email, setEmail] = useState("");
   const [amount, setAmount] = useState(0);
   const [status, setStatus] = useState("진행중");
+  const [startDate, setStartDate] = useState("");
+
+const [endDate, setEndDate] = useState("");
+
 
 
   // 용역 유형
@@ -187,7 +191,47 @@ export default function NewProjectPage() {
 
           </div>
 
+<div>
 
+<label className="text-sm text-neutral-500">
+  용역 시작일
+</label>
+
+<input
+
+className="mt-2 w-full rounded-lg border p-3"
+
+type="date"
+
+value={startDate}
+
+onChange={(e)=>setStartDate(e.target.value)}
+
+/>
+
+</div>
+
+
+
+<div>
+
+<label className="text-sm text-neutral-500">
+  용역 종료일
+</label>
+
+<input
+
+className="mt-2 w-full rounded-lg border p-3"
+
+type="date"
+
+value={endDate}
+
+onChange={(e)=>setEndDate(e.target.value)}
+
+/>
+
+</div>
 
 
 
@@ -376,10 +420,15 @@ export default function NewProjectPage() {
 
                 status,
 
-                progress:0,
+progress:0,
 
 
-                annual,
+startDate,
+
+endDate,
+
+
+annual,
 
                 multiRound,
 

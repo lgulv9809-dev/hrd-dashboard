@@ -42,13 +42,13 @@ export default function EditProjectPage() {
     useState("진행중");
 
 
-  // 용역 기간 추가
+ // 용역 기간
 
-  const [startMonth,setStartMonth] =
-    useState("");
+const [startDate,setStartDate] =
+  useState("");
 
-  const [endMonth,setEndMonth] =
-    useState("");
+const [endDate,setEndDate] =
+  useState("");
 
 
 
@@ -97,44 +97,43 @@ export default function EditProjectPage() {
 
 
 
-    updateProject({
+updateProject({
 
 
-      ...project,
+  ...project,
 
 
-      id:Number(id),
+  id:Number(id),
 
 
-      name,
+  name,
 
 
-      client,
+  client,
 
 
-      managerName,
+  managerName,
 
 
-      phone,
+  phone,
 
 
-      email,
+  email,
 
 
-      amount,
+  amount,
 
 
-      status,
+  status,
 
 
-      startMonth,
+  startDate,
 
 
-      endMonth,
+  endDate,
 
 
-
-    });
+});
 
 
 
@@ -267,7 +266,20 @@ export default function EditProjectPage() {
           placeholder="계약금액"
 
         />
+<input
+  className="mb-4 w-full rounded-lg border p-3"
+  type="date"
+  value={startDate}
+  onChange={(e)=>setStartDate(e.target.value)}
+/>
 
+
+<input
+  className="mb-4 w-full rounded-lg border p-3"
+  type="date"
+  value={endDate}
+  onChange={(e)=>setEndDate(e.target.value)}
+/>
 
 
 

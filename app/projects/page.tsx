@@ -30,8 +30,6 @@ function calculateCourseDifficulty(todos:any[]) {
 
 
 
-
-
 function calculateProjectDifficulty(courses:any[]) {
 
 
@@ -54,13 +52,9 @@ function calculateProjectDifficulty(courses:any[]) {
 
 
 
-
-
   if(highCourses >= 1){
     return "중";
   }
-
-
 
 
 
@@ -69,7 +63,6 @@ function calculateProjectDifficulty(courses:any[]) {
 
 
 }
-
 
 
 
@@ -88,7 +81,6 @@ export default function ProjectsPage() {
 
 
 
-
   const activeProjects =
 
     projects.filter(
@@ -97,8 +89,6 @@ export default function ProjectsPage() {
         project.status !== "완료"
 
     );
-
-
 
 
 
@@ -217,37 +207,28 @@ export default function ProjectsPage() {
 
 
 
-
                 <ProjectCard
-
 
 
                   key={project.id}
 
 
-
                   id={project.id}
-
 
 
                   name={project.name}
 
 
-
                   client={project.client}
-
 
 
                   amount={project.amount}
 
 
-
                   status={project.status}
 
 
-
                   courses={project.courses}
-
 
 
                   difficulty={
@@ -260,15 +241,11 @@ export default function ProjectsPage() {
 
 
 
-
-
                   annual={
 
                     project.annual ?? false
 
                   }
-
-
 
 
 
@@ -280,31 +257,23 @@ export default function ProjectsPage() {
 
 
 
+                  startDate={
 
-
-                  startMonth={
-
-                    project.startMonth ?? ""
+                    project.startDate ?? ""
 
                   }
 
 
 
+                  endDate={
 
-
-                  endMonth={
-
-                    project.endMonth ?? ""
+                    project.endDate ?? ""
 
                   }
-
-
 
 
 
                 />
-
-
 
 
 

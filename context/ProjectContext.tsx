@@ -47,12 +47,15 @@ type Project = {
   status: string;
 
 
-  // 추가
+  // 용역 기간
+  startDate?: string;
+  endDate?: string;
+
+
+  // 용역 유형
   annual?: boolean;
   multiRound?: boolean;
 
-    startDate?: string;
-  endDate?: string;
 
   courses: Course[];
 };
