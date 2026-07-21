@@ -5,22 +5,29 @@ import Link from "next/link";
 type ProjectCardProps = {
 
   id:number;
+
   name:string;
+
   client:string;
+
   amount:number;
+
   status:string;
+
   courses:any[];
+
   difficulty:string;
 
   annual?:boolean;
+
   multiRound?:boolean;
 
-  // 추가
-  startMonth?:string;
-  endMonth?:string;
+
+  startDate?:string;
+
+  endDate?:string;
 
 };
-
 
 
 
@@ -84,7 +91,6 @@ function calculateProjectProgress(courses:any[]){
 
 export default function ProjectCard({
 
-
 id,
 name,
 client,
@@ -94,9 +100,8 @@ courses,
 difficulty,
 annual,
 multiRound,
-startMonth,
-endMonth
-
+startDate,
+endDate
 
 }:ProjectCardProps){
 
