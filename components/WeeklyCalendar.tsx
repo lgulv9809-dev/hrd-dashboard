@@ -39,6 +39,17 @@ export default function WeeklyCalendar(){
 
 
 
+  // 날짜 관리 모달
+  const [openDate,setOpenDate] =
+    useState<string|null>(null);
+
+
+  const [modalTitle,setModalTitle] =
+    useState("");
+
+
+
+
 
 
 
@@ -89,6 +100,7 @@ export default function WeeklyCalendar(){
 
 
 
+
   const days = [
     "월",
     "화",
@@ -96,6 +108,7 @@ export default function WeeklyCalendar(){
     "목",
     "금"
   ];
+
 
 
 
@@ -143,7 +156,6 @@ export default function WeeklyCalendar(){
 
 
 
-  // TO DO 모으기
 
   const todos = projects.flatMap(project =>
 
@@ -204,7 +216,6 @@ export default function WeeklyCalendar(){
 
 
 
-
   const addSchedule=()=>{
 
 
@@ -236,6 +247,106 @@ export default function WeeklyCalendar(){
     setSelectedDate("");
 
   };
+
+
+
+
+
+
+
+
+
+  const deleteSchedule=(id:number)=>{
+
+
+    setSchedules(prev=>
+
+      prev.filter(
+        schedule=>
+        schedule.id!==id
+      )
+
+    );
+
+  };
+
+
+
+
+
+
+
+
+
+  const updateSchedule=(id:number,title:string)=>{
+
+
+    setSchedules(prev=>
+
+      prev.map(schedule=>
+
+        schedule.id===id
+
+        ?
+
+        {
+
+          ...schedule,
+
+          title
+
+        }
+
+        :
+
+        schedule
+
+      )
+
+    );
+
+
+  };
+
+
+
+
+
+
+
+
+
+  const addModalSchedule=()=>{
+
+
+    if(!openDate || !modalTitle.trim())
+      return;
+
+
+
+    setSchedules(prev=>[
+
+      ...prev,
+
+      {
+
+        id:Date.now(),
+
+        date:openDate,
+
+        title:modalTitle
+
+      }
+
+    ]);
+
+
+    setModalTitle("");
+
+
+  };
+
+
 
 
 
@@ -315,186 +426,321 @@ export default function WeeklyCalendar(){
 
 
 
-        {
-          days.map((day,index)=>(
+      {
+        days.map((day,index)=>(
 
 
-            <div
+          <div
 
-              key={day}
 
-              className="min-h-[180px] rounded-xl border p-4"
+          key={day}
 
-            >
 
+          onDoubleClick={()=>{
 
 
-              <p className="font-bold">
+            const date =
 
-                {day}
+            `${dates[index].getFullYear()}-${
 
-              </p>
+              String(
+                dates[index].getMonth()+1
+              ).padStart(2,"0")
 
+            }-${
 
+              String(
+                dates[index].getDate()
+              ).padStart(2,"0")
 
+            }`;
 
-              <p className="mt-2 text-neutral-500">
 
-                {dates[index].getMonth()+1}월{" "}
 
-                {dates[index].getDate()}일
+            setOpenDate(date);
 
-              </p>
 
+          }}
 
 
 
+          className="min-h-[180px] rounded-xl border p-4 cursor-pointer"
 
+          >
 
 
 
+            <p className="font-bold">
 
-              <div className="mt-4 space-y-2">
+              {day}
 
+            </p>
 
 
 
 
-              {/* 과정 TO DO */}
+            <p className="mt-2 text-neutral-500">
 
-              {
+              {dates[index].getMonth()+1}월{" "}
 
-                todos.filter(todo=>{
+              {dates[index].getDate()}일
 
+            </p>
 
-                  if(!todo.startDate)
-                    return false;
 
 
 
-                  const todoDate =
-                    new Date(todo.startDate);
 
 
 
-                  return (
+            <div className="mt-4 space-y-2">
 
-                    todoDate.getDate()
-                    ===
-                    dates[index].getDate()
 
-                    &&
 
-                    todoDate.getMonth()
-                    ===
-                    dates[index].getMonth()
 
-                  );
 
 
-                })
 
-                .map(todo=>(
 
+            {/* 과정 TO DO */}
 
-                  <div
+            {
 
-                    key={todo.id}
+            todos.filter(todo=>{
 
-                    className="rounded-lg bg-green-100 p-2 text-sm"
 
-                  >
+              if(!todo.startDate)
+                return false;
 
-                    <p className="font-bold">
 
-                      {todo.title}
 
-                    </p>
+              const todoDate =
+                new Date(todo.startDate);
 
 
-                    <p className="text-xs text-neutral-600">
 
-                      {todo.courseName}
+              return (
 
-                    </p>
+                todoDate.getDate()
+                ===
+                dates[index].getDate()
 
+                &&
 
-                  </div>
+                todoDate.getMonth()
+                ===
+                dates[index].getMonth()
 
+              );
 
-                ))
 
-              }
+            })
 
+            .map(todo=>(
 
 
+              <div
 
+              key={todo.id}
 
+              className="rounded-lg bg-green-100 p-2 text-sm"
 
+              >
 
+                <p className="font-bold">
 
+                  {todo.title}
 
-              {/* 직접 추가 일정 */}
+                </p>
 
-              {
 
-                schedules
+                <p className="text-xs text-neutral-600">
 
-                .filter(schedule=>{
+                  {todo.courseName}
 
-
-                  const date =
-                    new Date(schedule.date);
-
-
-
-                  return (
-
-                    date.getDate()
-                    ===
-                    dates[index].getDate()
-
-                    &&
-
-                    date.getMonth()
-                    ===
-                    dates[index].getMonth()
-
-                  );
-
-
-                })
-
-
-                .map(schedule=>(
-
-
-                  <div
-
-                    key={schedule.id}
-
-                    className="rounded-lg bg-pink-100 p-2 text-sm"
-
-                  >
-
-                    <p className="font-bold text-pink-700">
-
-                      {schedule.title}
-
-                    </p>
-
-
-                  </div>
-
-
-                ))
-
-              }
-
+                </p>
 
 
               </div>
 
+
+            ))
+
+            }
+
+
+
+
+
+
+
+
+
+            {/* 개인 일정 */}
+
+            {
+
+            schedules
+
+            .filter(schedule=>{
+
+
+              const date =
+                new Date(schedule.date);
+
+
+
+              return (
+
+                date.getDate()
+                ===
+                dates[index].getDate()
+
+                &&
+
+                date.getMonth()
+                ===
+                dates[index].getMonth()
+
+              );
+
+
+            })
+
+
+            .map(schedule=>(
+
+
+              <div
+
+              key={schedule.id}
+
+              className="rounded-lg bg-pink-100 p-2 text-sm"
+
+              >
+
+
+                <p className="font-bold text-pink-700">
+
+                  {schedule.title}
+
+                </p>
+
+
+              </div>
+
+
+            ))
+
+            }
+
+
+
+            </div>
+
+
+
+          </div>
+
+
+        ))
+
+      }
+
+
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      {/* 날짜 더블클릭 모달 */}
+
+
+      {
+      openDate && (
+
+
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+
+
+        <div className="w-96 rounded-xl bg-white p-6">
+
+
+          <h3 className="text-xl font-bold">
+
+            {openDate} 일정 관리
+
+          </h3>
+
+
+
+
+
+          <div className="mt-5 space-y-3">
+
+
+          {
+
+          schedules
+
+          .filter(
+            schedule=>
+            schedule.date===openDate
+          )
+
+          .map(schedule=>(
+
+
+            <div
+
+            key={schedule.id}
+
+            className="flex gap-2"
+
+            >
+
+
+              <input
+
+              className="flex-1 rounded border p-2"
+
+              value={schedule.title}
+
+              onChange={(e)=>
+
+                updateSchedule(
+
+                  schedule.id,
+
+                  e.target.value
+
+                )
+
+              }
+
+              />
+
+
+              <button
+
+              onClick={()=>deleteSchedule(schedule.id)}
+
+              className="rounded bg-red-600 px-3 text-white"
+
+              >
+
+              삭제
+
+              </button>
 
 
             </div>
@@ -502,10 +748,87 @@ export default function WeeklyCalendar(){
 
           ))
 
-        }
+          }
+
+
+          </div>
+
+
+
+
+
+
+
+          <div className="mt-5 flex gap-2">
+
+
+            <input
+
+            className="flex-1 rounded border p-2"
+
+            placeholder="새 일정"
+
+            value={modalTitle}
+
+            onChange={(e)=>
+              setModalTitle(e.target.value)
+            }
+
+            />
+
+
+
+            <button
+
+            onClick={addModalSchedule}
+
+            className="rounded bg-green-700 px-3 text-white"
+
+            >
+
+            추가
+
+            </button>
+
+
+          </div>
+
+
+
+
+
+
+
+          <button
+
+          onClick={()=>{
+
+            setOpenDate(null);
+
+            setModalTitle("");
+
+          }}
+
+          className="mt-5 w-full rounded bg-neutral-300 p-2"
+
+          >
+
+          닫기
+
+          </button>
+
+
+
+        </div>
 
 
       </div>
+
+
+      )
+
+      }
+
 
 
 
@@ -533,13 +856,15 @@ export default function WeeklyCalendar(){
 
           <input
 
-            type="date"
+          type="date"
 
-            value={selectedDate}
+          value={selectedDate}
 
-            onChange={(e)=>setSelectedDate(e.target.value)}
+          onChange={(e)=>
+            setSelectedDate(e.target.value)
+          }
 
-            className="rounded-lg border p-2"
+          className="rounded-lg border p-2"
 
           />
 
@@ -547,13 +872,15 @@ export default function WeeklyCalendar(){
 
           <input
 
-            value={newTitle}
+          value={newTitle}
 
-            onChange={(e)=>setNewTitle(e.target.value)}
+          onChange={(e)=>
+            setNewTitle(e.target.value)
+          }
 
-            placeholder="예) 연차, 팀점, 외근"
+          placeholder="예) 연차, 팀점, 외근"
 
-            className="flex-1 rounded-lg border p-2"
+          className="flex-1 rounded-lg border p-2"
 
           />
 
@@ -561,16 +888,15 @@ export default function WeeklyCalendar(){
 
           <button
 
-            onClick={addSchedule}
+          onClick={addSchedule}
 
-             className="rounded-lg bg-green-800 px-5 text-white hover:bg-green-700"
+          className="rounded-lg bg-green-800 px-5 text-white"
 
           >
 
-            추가
+          추가
 
           </button>
-
 
 
         </div>

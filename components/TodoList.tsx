@@ -11,8 +11,10 @@ export default function TodoList() {
   const {
     todos,
     addTodo,
+    updateTodo:updatePersonalTodo,
     deleteTodo
   } = useTodos();
+
 
 
   const {
@@ -22,31 +24,50 @@ export default function TodoList() {
 
 
 
+
   const [text,setText] = useState("");
 
-  const [editingId,setEditingId] = useState<number | null>(null);
-
-  const [editText,setEditText] = useState("");
 
 
+  const [editingId,setEditingId] =
+  useState<number|null>(null);
 
 
-  const handleAdd = ()=>{
+  const [editText,setEditText] =
+  useState("");
+
+
+
+  const [editingPersonalId,setEditingPersonalId] =
+  useState<number|null>(null);
+
+
+  const [editPersonalText,setEditPersonalText] =
+  useState("");
+
+
+
+
+
+
+  const handleAdd=()=>{
 
 
     if(!text.trim())
       return;
 
 
+
     addTodo({
 
-      id: Date.now(),
+      id:Date.now(),
 
       text,
 
       done:false
 
     });
+
 
 
     setText("");
@@ -58,31 +79,80 @@ export default function TodoList() {
 
 
 
+
+
+
+  // 오늘 기준 필요한 과정 TO DO만 표시
+
+  const today = new Date();
+
+  today.setHours(0,0,0,0);
+
+
+
+
   const projectTodos = projects.flatMap(project =>
 
 
     project.courses?.flatMap(course =>
 
 
-      course.todos?.map(todo=>({
+      course.todos
+
+      ?.filter(todo=>{
+
+
+        // 완료한 일 제외
+
+        if(todo.completed)
+          return false;
+
+
+
+        // 날짜 없는 것 제외
+
+        if(!todo.startDate)
+          return false;
+
+
+
+        const todoDate =
+          new Date(todo.startDate);
+
+
+
+        todoDate.setHours(0,0,0,0);
+
+
+
+        // 오늘 또는 지난 날짜만
+
+        return todoDate <= today;
+
+
+      })
+
+
+      .map(todo=>({
 
 
         ...todo,
 
 
-        projectName: project.name,
+        projectName:project.name,
 
 
-        courseName: course.name,
+        courseName:course.name,
 
 
-        projectId: project.id,
+        projectId:project.id,
 
 
-        courseId: course.id
+        courseId:course.id
 
 
       })) || []
+
 
 
     ) || []
@@ -96,358 +166,503 @@ export default function TodoList() {
 
 
 
+
+
+
+
   return (
 
-    <div className="mt-10 rounded-2xl bg-white p-6 shadow-sm border border-neutral-200">
+<div className="mt-10 rounded-2xl bg-white p-6 shadow-sm border border-neutral-200">
 
 
-      <h2 className="text-xl font-bold">
+<h2 className="text-xl font-bold">
 
-        오늘 해야 할 일
+오늘 해야 할 일
 
-      </h2>
+</h2>
 
 
 
 
 
+<div className="mt-6 space-y-3">
 
-      <div className="mt-6 space-y-3">
 
 
 
 
 
-        {/* 직접 추가한 업무 */}
 
-        {
-          todos.map(todo=>(
+{/* 개인 Todo */}
 
 
-            <div
+{
 
-            key={todo.id}
+todos.map(todo=>(
 
-            className="flex items-center justify-between rounded-lg bg-neutral-50 p-4"
 
-            >
+<div
 
+key={todo.id}
 
-              <span>
+className="flex items-center justify-between rounded-lg bg-neutral-50 p-4"
 
-                {todo.text}
+>
 
-              </span>
 
 
+{
 
-              <button
+editingPersonalId===todo.id ? (
 
-              onClick={()=>deleteTodo(todo.id)}
 
-              className="rounded-lg bg-red-600 px-3 py-1 text-sm text-white"
+<div className="flex gap-2">
 
-              >
 
-              삭제
+<input
 
-              </button>
+className="rounded border px-2 py-1"
 
+value={editPersonalText}
 
-            </div>
+onChange={(e)=>
+setEditPersonalText(e.target.value)
+}
 
+/>
 
-          ))
-        }
 
+<button
 
+className="rounded bg-green-700 px-3 py-1 text-sm text-white"
 
+onClick={()=>{
 
 
+updatePersonalTodo(
 
+todo.id,
 
+editPersonalText
 
+);
 
-        {/* 프로젝트 Todo */}
 
-        {
-          projectTodos.map(todo=>(
+setEditingPersonalId(null);
 
 
-            <div
+}}
 
-            key={todo.id}
+>
 
-            className="rounded-lg bg-green-50 p-4"
+저장
 
-            >
+</button>
 
 
+</div>
 
-              <div className="flex items-center justify-between">
 
+)
 
 
+:
 
 
-                <div className="flex items-center gap-3">
+(
 
 
+<span>
 
-                  <input
+{todo.text}
 
-                  type="checkbox"
+</span>
 
-                  checked={todo.completed}
 
-                  onChange={()=>updateTodo(
+)
 
-                    todo.projectId,
 
-                    todo.courseId,
+}
 
-                    {
 
-                      ...todo,
 
-                      completed:!todo.completed
 
-                    }
 
-                  )}
+<div className="flex gap-2">
 
-                  />
 
+{
 
+editingPersonalId!==todo.id && (
 
 
+<button
 
+onClick={()=>{
 
-                  {
-                    editingId === todo.id ? (
 
+setEditingPersonalId(todo.id);
 
-                      <div className="flex gap-2">
+setEditPersonalText(todo.text);
 
 
-                        <input
+}}
 
-                        className="rounded border px-2 py-1"
+className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
 
-                        value={editText}
+>
 
-                        onChange={(e)=>
+수정
 
-                          setEditText(e.target.value)
+</button>
 
-                        }
 
-                        />
+)
 
+}
 
-                        <button
 
-                        className="rounded bg-green-700 px-3 py-1 text-sm text-white"
 
-                        onClick={()=>{
 
+<button
 
-                          updateTodo(
+onClick={()=>deleteTodo(todo.id)}
 
-                            todo.projectId,
+className="rounded bg-red-600 px-3 py-1 text-sm text-white"
 
-                            todo.courseId,
+>
 
-                            {
+삭제
 
-                              ...todo,
+</button>
 
-                              title:editText
 
-                            }
 
-                          );
+</div>
 
 
-                          setEditingId(null);
+</div>
 
 
-                        }}
+))
 
-                        >
 
-                        저장
+}
 
-                        </button>
 
 
-                      </div>
 
 
-                    )
 
-                    :
 
-                    (
 
-                      <div>
 
 
-                        <p className="font-bold">
 
-                          {todo.title}
+{/* 과정 Todo */}
 
-                        </p>
 
 
-                        <p className="text-sm text-neutral-500">
+{
 
-                          {todo.projectName}
+projectTodos.map(todo=>(
 
-                          {" / "}
 
-                          {todo.courseName}
+<div
 
-                        </p>
+key={todo.id}
 
+className="rounded-lg bg-green-50 p-4"
 
-                      </div>
+>
 
-                    )
 
-                  }
+<div className="flex justify-between items-center">
 
 
 
-                </div>
 
 
+<div className="flex items-center gap-3">
 
 
+<input
 
+type="checkbox"
 
-                {
-                  editingId !== todo.id && (
+checked={todo.completed}
 
+onChange={()=>updateTodo(
 
-                    <button
+todo.projectId,
 
-                    className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
+todo.courseId,
 
-                    onClick={()=>{
+{
 
+...todo,
 
-                      setEditingId(todo.id);
+completed:!todo.completed
 
-                      setEditText(todo.title);
+}
 
+)}
 
-                    }}
+/>
 
-                    >
 
-                    수정
 
-                    </button>
 
 
-                  )
-                }
 
 
+{
 
-              </div>
+editingId===todo.id ? (
 
 
+<div className="flex gap-2">
 
-            </div>
 
+<input
 
-          ))
-        }
+className="rounded border px-2 py-1"
 
+value={editText}
 
+onChange={(e)=>
+setEditText(e.target.value)
+}
 
+/>
 
 
+<button
 
+className="rounded bg-green-700 px-3 py-1 text-sm text-white"
 
+onClick={()=>{
 
 
-        {
-          todos.length === 0 &&
-          projectTodos.length === 0 && (
+updateTodo(
 
-            <p className="text-neutral-500">
+todo.projectId,
 
-              등록된 업무가 없습니다.
+todo.courseId,
 
-            </p>
+{
 
-          )
-        }
+...todo,
 
+title:editText
 
+}
 
-      </div>
+);
 
 
+setEditingId(null);
 
 
+}}
 
+>
 
+저장
 
+</button>
 
 
-      {/* 새 업무 추가 */}
+</div>
 
 
-      <div className="mt-6 flex gap-3 border-t pt-5">
+)
 
 
-        <input
+:
 
-        className="flex-1 rounded-lg border p-3"
 
-        placeholder="새 업무 입력"
+(
 
-        value={text}
 
-        onChange={(e)=>setText(e.target.value)}
+<div>
 
-        onKeyDown={(e)=>{
 
-          if(e.key==="Enter"){
+<p className="font-bold">
 
-            handleAdd();
+{todo.title}
 
-          }
+</p>
 
-        }}
 
-        />
+<p className="text-sm text-neutral-500">
 
+{todo.projectName}
 
+{" / "}
 
-        <button
+{todo.courseName}
 
-        onClick={handleAdd}
+</p>
 
-        className="rounded-lg bg-green-800 px-5 text-white"
 
-        >
+</div>
 
-        추가
 
-        </button>
+)
 
 
-      </div>
+}
 
 
 
+</div>
 
-    </div>
+
+
+
+
+
+
+
+
+{
+
+editingId!==todo.id && (
+
+
+<button
+
+onClick={()=>{
+
+
+setEditingId(todo.id);
+
+setEditText(todo.title);
+
+
+}}
+
+className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
+
+>
+
+수정
+
+</button>
+
+
+)
+
+}
+
+
+
+</div>
+
+
+</div>
+
+
+))
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+
+todos.length===0 &&
+projectTodos.length===0 && (
+
+
+<p className="text-neutral-500">
+
+등록된 업무가 없습니다.
+
+</p>
+
+
+)
+
+}
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+{/* 개인 업무 추가 */}
+
+
+<div className="mt-6 flex gap-3 border-t pt-5">
+
+
+<input
+
+className="flex-1 rounded-lg border p-3"
+
+placeholder="새 업무 입력"
+
+value={text}
+
+onChange={(e)=>
+setText(e.target.value)
+}
+
+onKeyDown={(e)=>{
+
+if(e.key==="Enter")
+handleAdd();
+
+}}
+
+/>
+
+
+
+<button
+
+onClick={handleAdd}
+
+className="rounded-lg bg-green-800 px-5 text-white"
+
+>
+
+추가
+
+</button>
+
+
+
+</div>
+
+
+
+
+
+</div>
+
 
   );
 
