@@ -24,9 +24,7 @@ export default function TodoList() {
 
 
 
-
   const [text,setText] = useState("");
-
 
 
   const [editingId,setEditingId] =
@@ -48,14 +46,11 @@ export default function TodoList() {
 
 
 
-
-
   const handleAdd=()=>{
 
 
     if(!text.trim())
       return;
-
 
 
     addTodo({
@@ -69,7 +64,6 @@ export default function TodoList() {
     });
 
 
-
     setText("");
 
   };
@@ -80,16 +74,31 @@ export default function TodoList() {
 
 
 
-
-
-  // 오늘 기준 필요한 과정 TO DO만 표시
-
   const today = new Date();
 
   today.setHours(0,0,0,0);
 
 
 
+
+
+  // 개인 Todo
+  const visiblePersonalTodos =
+  todos.filter(todo=>{
+
+    if(todo.done)
+      return false;
+
+    return true;
+
+  });
+
+
+
+
+
+
+  // 과정 Todo
 
   const projectTodos = projects.flatMap(project =>
 
@@ -102,32 +111,11 @@ export default function TodoList() {
       ?.filter(todo=>{
 
 
-        // 완료한 일 제외
-
         if(todo.completed)
           return false;
 
 
-
-        // 날짜 없는 것 제외
-
-        if(!todo.startDate)
-          return false;
-
-
-
-        const todoDate =
-          new Date(todo.startDate);
-
-
-
-        todoDate.setHours(0,0,0,0);
-
-
-
-        // 오늘 또는 지난 날짜만
-
-        return todoDate <= today;
+        return true;
 
 
       })
@@ -138,15 +126,11 @@ export default function TodoList() {
 
         ...todo,
 
-
         projectName:project.name,
-
 
         courseName:course.name,
 
-
         projectId:project.id,
-
 
         courseId:course.id
 
@@ -158,6 +142,7 @@ export default function TodoList() {
     ) || []
 
 
+
   );
 
 
@@ -166,11 +151,38 @@ export default function TodoList() {
 
 
 
+  // 날짜순 정렬
+
+  projectTodos.sort((a,b)=>{
+
+
+    const aDate =
+    a.startDate
+    ?
+    new Date(a.startDate).getTime()
+    :
+    Infinity;
+
+
+    const bDate =
+    b.startDate
+    ?
+    new Date(b.startDate).getTime()
+    :
+    Infinity;
+
+
+    return aDate-bDate;
+
+
+  });
 
 
 
 
-  return (
+
+
+return (
 
 <div className="mt-10 rounded-2xl bg-white p-6 shadow-sm border border-neutral-200">
 
@@ -185,8 +197,7 @@ export default function TodoList() {
 
 
 
-<div className="mt-6 space-y-3">
-
+<div className="mt-6 space-y-4">
 
 
 
@@ -198,7 +209,7 @@ export default function TodoList() {
 
 {
 
-todos.map(todo=>(
+visiblePersonalTodos.map(todo=>(
 
 
 <div
@@ -208,7 +219,6 @@ key={todo.id}
 className="flex items-center justify-between rounded-lg bg-neutral-50 p-4"
 
 >
-
 
 
 {
@@ -265,9 +275,7 @@ setEditingPersonalId(null);
 
 )
 
-
 :
-
 
 (
 
@@ -286,8 +294,6 @@ setEditingPersonalId(null);
 
 
 
-
-
 <div className="flex gap-2">
 
 
@@ -300,11 +306,9 @@ editingPersonalId!==todo.id && (
 
 onClick={()=>{
 
-
 setEditingPersonalId(todo.id);
 
 setEditPersonalText(todo.text);
-
 
 }}
 
@@ -320,7 +324,6 @@ className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
 )
 
 }
-
 
 
 
@@ -357,8 +360,6 @@ className="rounded bg-red-600 px-3 py-1 text-sm text-white"
 
 
 
-
-
 {/* 과정 Todo */}
 
 
@@ -380,10 +381,8 @@ className="rounded-lg bg-green-50 p-4"
 <div className="flex justify-between items-center">
 
 
-
-
-
 <div className="flex items-center gap-3">
+
 
 
 <input
@@ -409,7 +408,6 @@ completed:!todo.completed
 )}
 
 />
-
 
 
 
@@ -495,6 +493,7 @@ setEditingId(null);
 </p>
 
 
+
 <p className="text-sm text-neutral-500">
 
 {todo.projectName}
@@ -506,6 +505,23 @@ setEditingId(null);
 </p>
 
 
+
+{
+
+todo.startDate && (
+
+<p className="text-xs text-neutral-400">
+
+마감 : {todo.startDate}
+
+</p>
+
+)
+
+}
+
+
+
 </div>
 
 
@@ -515,10 +531,7 @@ setEditingId(null);
 }
 
 
-
 </div>
-
-
 
 
 
@@ -535,11 +548,9 @@ editingId!==todo.id && (
 
 onClick={()=>{
 
-
 setEditingId(todo.id);
 
 setEditText(todo.title);
-
 
 }}
 
@@ -577,13 +588,9 @@ className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
 
 
 
-
-
-
-
 {
 
-todos.length===0 &&
+visiblePersonalTodos.length===0 &&
 projectTodos.length===0 && (
 
 
@@ -597,8 +604,6 @@ projectTodos.length===0 && (
 )
 
 }
-
-
 
 
 
@@ -664,6 +669,6 @@ className="rounded-lg bg-green-800 px-5 text-white"
 </div>
 
 
-  );
+);
 
 }
