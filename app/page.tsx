@@ -2,7 +2,6 @@
 
 import { useProjects } from "@/context/ProjectContext";
 import { useTodos } from "@/context/TodoContext";
-import { useEducations } from "@/context/EducationContext";
 
 import SummaryCard from "@/components/SummaryCard";
 import TodoList from "@/components/TodoList";
@@ -12,7 +11,7 @@ export default function Home() {
 
   const { projects } = useProjects();
   const { todos } = useTodos();
-  const { educations } = useEducations();
+  
 
   // ==========================
   // 총 계약 금액
@@ -47,13 +46,42 @@ export default function Home() {
 
   );
 
-  // ==========================
-  // 예정 교육
-  // ==========================
+// ==========================
+// 오늘 진행중인 과정
+// ==========================
 
-  const upcomingEducations = educations.filter(
-    education => (education.progress || 0) < 100
-  );
+
+const todayCourses = projects.flatMap(project =>
+
+  project.courses?.filter(course => {
+
+    if(!course.startDate || !course.endDate)
+      return false;
+
+
+    const start = new Date(course.startDate);
+
+    const end = new Date(course.endDate);
+
+
+    return (
+      today >= start &&
+      today <= end
+    );
+
+  }).map(course=>({
+
+    ...course,
+
+    projectName: project.name
+
+  })) || []
+
+);
+
+
+const todayCourseNames =
+  todayCourses.map(course => course.name);
 
   // ==========================
   // 이번주 업무시간 계산
@@ -214,9 +242,13 @@ const totalHours =
           />
 
           <SummaryCard
-            title="예정된 교육 일정"
-            value={`${upcomingEducations.length}건`}
-          />
+  title="오늘 진행중인 과정"
+  value={
+    todayCourseNames.length > 0
+    ? todayCourseNames.join(", ")
+    : "없음"
+  }
+/>
 
           <SummaryCard
             title="업무 부하량"
