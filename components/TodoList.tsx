@@ -25,8 +25,8 @@ export default function TodoList() {
 } = useProjects();
 
 
-
-  const [text,setText] = useState("");
+const [text,setText] = useState("");
+  const [hours,setHours] = useState(1);
 
 
   const [selectedDate,setSelectedDate] =
@@ -49,6 +49,8 @@ export default function TodoList() {
 
   const [editPersonalText,setEditPersonalText] =
   useState("");
+  const [editPersonalHours,setEditPersonalHours] =
+useState(1);
 
   const [selectedCourse, setSelectedCourse] =
 useState("");
@@ -56,8 +58,13 @@ useState("");
 const [editingProjectTodo, setEditingProjectTodo] =
 useState<number | null>(null);
 
-const [editProjectText, setEditProjectText] =
-useState("");
+const [editProjectTodo, setEditProjectTodo] = useState({
+  title: "",
+  difficulty: "보통",
+  hours: 1,
+  startDate: "",
+  endDate: "",
+});
 
 
 
@@ -89,10 +96,11 @@ useState("");
   if (selectedCourse === "") {
 
     addTodo({
-      id: Date.now(),
-      text,
-      done: false,
-    });
+  id: Date.now(),
+  text,
+  done: false,
+  hours: hours,
+});
 
   } else {
 
@@ -117,7 +125,7 @@ useState("");
 
   setText("");
   setSelectedCourse("");
-
+setHours(1);
 };
 
 
@@ -258,9 +266,29 @@ useState("");
 
   });
 
+const totalProjectHours =
+filteredProjectTodos.reduce(
+  (sum, todo) => sum + (todo.hours || 0),
+  0
+);
 
+const totalPersonalHours =
+visiblePersonalTodos.length;
 
+const totalHours =
+totalProjectHours + totalPersonalHours;
 
+let hourColor = "text-green-700";
+
+if (totalHours >= 7) {
+
+  hourColor = "text-red-600";
+
+} else if (totalHours >= 4) {
+
+  hourColor = "text-yellow-600";
+
+}
 
 
 return (
@@ -278,7 +306,11 @@ return (
 
 </h2>
 
+<p className={`mt-2 font-semibold ${hourColor}`}>
 
+🕒 오늘 예상 업무시간 : {totalHours}시간
+
+</p>
 
 <div className="flex gap-2">
 
@@ -366,7 +398,15 @@ setEditPersonalText(e.target.value)
 }
 
 />
-
+<input
+  type="number"
+  min="1"
+  className="w-20 rounded border px-2 py-1"
+  value={editPersonalHours}
+  onChange={(e)=>
+    setEditPersonalHours(Number(e.target.value))
+  }
+/>
 
 <button
 
@@ -379,7 +419,9 @@ updatePersonalTodo(
 
 todo.id,
 
-editPersonalText
+editPersonalText,
+
+editPersonalHours
 
 );
 
@@ -409,6 +451,10 @@ setEditingPersonalId(null);
 
 {todo.text}
 
+<span className="ml-2 text-sm text-neutral-500">
+({todo.hours || 0}시간)
+</span>
+
 </span>
 
 )
@@ -434,6 +480,8 @@ onClick={()=>{
 setEditingPersonalId(todo.id);
 
 setEditPersonalText(todo.text);
+
+setEditPersonalHours(todo.hours || 1);
 
 }}
 
@@ -503,13 +551,16 @@ checked={todo.completed}
 onChange={()=>{
 
 updateTodo(
-todo.projectId,
-todo.courseId,
-{
-...todo,
-completed:!todo.completed
-}
-
+  todo.projectId,
+  todo.courseId,
+  {
+    ...todo,
+    title: editProjectTodo.title,
+    difficulty: editProjectTodo.difficulty,
+    hours: editProjectTodo.hours,
+    startDate: editProjectTodo.startDate,
+    endDate: editProjectTodo.endDate,
+  }
 );
 
 }}
@@ -520,41 +571,116 @@ completed:!todo.completed
 {
 editingProjectTodo===todo.id ?
 
-<div className="flex gap-2">
+<div className="space-y-3">
 
-<input
-className="rounded border px-2 py-1"
-value={editProjectText}
-onChange={(e)=>
-setEditProjectText(e.target.value)
-}
-/>
+  <input
+    className="w-full rounded border p-2"
+    placeholder="업무명"
+    value={editProjectTodo.title}
+    onChange={(e)=>
+      setEditProjectTodo({
+        ...editProjectTodo,
+        title:e.target.value
+      })
+    }
+  />
 
-<button
-className="rounded bg-green-700 px-3 py-1 text-white text-sm"
-onClick={()=>{
+  <div className="grid grid-cols-2 gap-2">
 
-updateTodo(
-todo.projectId,
-todo.courseId,
-{
-...todo,
-title:editProjectText
-}
-);
+    <select
+      className="rounded border p-2"
+      value={editProjectTodo.difficulty}
+      onChange={(e)=>
+        setEditProjectTodo({
+          ...editProjectTodo,
+          difficulty:e.target.value
+        })
+      }
+    >
+      <option value="하">하</option>
+      <option value="보통">보통</option>
+      <option value="상">상</option>
+    </select>
 
-setEditingProjectTodo(null);
+    <input
+      type="number"
+      className="rounded border p-2"
+      value={editProjectTodo.hours}
+      onChange={(e)=>
+        setEditProjectTodo({
+          ...editProjectTodo,
+          hours:Number(e.target.value)
+        })
+      }
+    />
 
-}}
->
+  </div>
 
-저장
+  <div className="grid grid-cols-2 gap-2">
 
-</button>
+    <input
+      type="date"
+      className="rounded border p-2"
+      value={editProjectTodo.startDate}
+      onChange={(e)=>
+        setEditProjectTodo({
+          ...editProjectTodo,
+          startDate:e.target.value
+        })
+      }
+    />
+
+    <input
+      type="date"
+      className="rounded border p-2"
+      value={editProjectTodo.endDate}
+      onChange={(e)=>
+        setEditProjectTodo({
+          ...editProjectTodo,
+          endDate:e.target.value
+        })
+      }
+    />
+
+  </div>
+
+  <div className="flex gap-2">
+
+    <button
+      className="rounded bg-green-700 px-3 py-2 text-white"
+      onClick={()=>{
+
+        updateTodo(
+          todo.projectId,
+          todo.courseId,
+          {
+            ...todo,
+            ...editProjectTodo
+          }
+        );
+
+        setEditingProjectTodo(null);
+
+      }}
+    >
+      저장
+    </button>
+
+    <button
+      className="rounded bg-gray-500 px-3 py-2 text-white"
+      onClick={()=>{
+        setEditingProjectTodo(null);
+      }}
+    >
+      취소
+    </button>
+
+  </div>
 
 </div>
 
 :
+
 
 <>
 
@@ -594,7 +720,14 @@ className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
 onClick={()=>{
 
 setEditingProjectTodo(todo.id);
-setEditProjectText(todo.title);
+
+setEditProjectTodo({
+  title: todo.title,
+  difficulty: todo.difficulty,
+  hours: todo.hours,
+  startDate: todo.startDate,
+  endDate: todo.endDate,
+});
 
 }}
 >
@@ -707,14 +840,25 @@ filteredProjectTodos.length===0 && (
         handleAdd();
       }
     }}
-  />
 
-  <button
-    onClick={handleAdd}
-    className="rounded-lg bg-green-800 px-5 text-white"
-  >
-    추가
-  </button>
+    
+  />
+  <input
+  type="number"
+  min="1"
+  className="w-24 rounded-lg border p-3"
+  value={hours}
+  onChange={(e)=>setHours(Number(e.target.value))}
+  placeholder="시간"
+/>
+
+
+<button
+  onClick={handleAdd}
+  className="rounded-lg bg-green-800 px-5 text-white"
+>
+  추가
+</button>
 
 </div>
 

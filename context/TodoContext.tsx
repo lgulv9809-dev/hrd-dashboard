@@ -14,6 +14,7 @@ type Todo = {
   id: number;
   text: string;
   done: boolean;
+  hours: number;
 };
 
 
@@ -26,9 +27,10 @@ type TodoContextType = {
   addTodo: (todo: Todo)=>void;
 
   updateTodo: (
-    id:number,
-    text:string
-  )=>void;
+  id:number,
+  text:string,
+  hours:number
+)=>void;
 
   deleteTodo: (
     id:number
@@ -136,39 +138,41 @@ export function TodoProvider({
 
   const updateTodo=(
 
-    id:number,
+  id:number,
 
-    text:string
+  text:string,
 
-  )=>{
+  hours:number
 
+)=>{
 
-    setTodos((prev)=>
+  setTodos((prev)=>
 
-      prev.map(todo=>
+    prev.map(todo=>
 
-        todo.id === id
+      todo.id===id
 
-        ?
+      ?
 
-        {
+      {
 
-          ...todo,
+        ...todo,
 
-          text
+        text,
 
-        }
+        hours,
 
-        :
+      }
 
-        todo
+      :
 
-      )
+      todo
 
-    );
+    )
 
+  );
 
-  };
+};
 
 
 

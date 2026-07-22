@@ -1,37 +1,31 @@
 "use client";
 
 import { useProjects } from "@/context/ProjectContext";
+import { useTodos } from "@/context/TodoContext";
 import { useEducations } from "@/context/EducationContext";
 
 import SummaryCard from "@/components/SummaryCard";
 import TodoList from "@/components/TodoList";
 import WeeklyCalendar from "@/components/WeeklyCalendar";
 
-
-
 export default function Home() {
 
-
   const { projects } = useProjects();
+  const { todos } = useTodos();
   const { educations } = useEducations();
 
-
-
-
-
+  // ==========================
+  // 총 계약 금액
+  // ==========================
 
   const totalAmount = projects.reduce(
     (sum, project) => sum + project.amount,
     0
   );
 
-
-
-
-
-
-
-  // 미완료 TO DO가 있는 과정 수
+  // ==========================
+  // 준비중인 과정
+  // ==========================
 
   const activeCourses = projects.reduce(
 
@@ -41,218 +35,138 @@ export default function Home() {
 
       (project.courses?.filter(course => {
 
-
-        if(!course.todos || course.todos.length === 0){
-
+        if (!course.todos || course.todos.length === 0) {
           return false;
-
         }
 
-
-        return course.todos.some(
-          todo => !todo.completed
-        );
-
+        return course.todos.some(todo => !todo.completed);
 
       }).length || 0),
-
 
     0
 
   );
 
-
-
-
-
-
-
-
-
-  // 예정 교육 일정
+  // ==========================
+  // 예정 교육
+  // ==========================
 
   const upcomingEducations = educations.filter(
-
-    (education)=>
-
-      (education.progress || 0) < 100
-
+    education => (education.progress || 0) < 100
   );
 
-
-
-
-
-
-
-
-
   // ==========================
-  // 금주 업무 부하량 계산
+  // 이번주 업무시간 계산
   // ==========================
-
 
   const today = new Date();
 
-
   const day = today.getDay();
 
-
   const monday = new Date(today);
-
 
   monday.setDate(
     today.getDate() - (day === 0 ? 6 : day - 1)
   );
 
-
-  monday.setHours(0,0,0,0);
-
-
+  monday.setHours(0, 0, 0, 0);
 
   const sunday = new Date(monday);
 
+  sunday.setDate(monday.getDate() + 6);
 
-  sunday.setDate(
-    monday.getDate() + 6
-  );
-
-
-  sunday.setHours(23,59,59,999);
-
-
-
-
-
-
+  sunday.setHours(23, 59, 59, 999);
 
   const weeklyHours = projects.reduce(
 
-
-    (sum, project)=>
-
+    (sum, project) =>
 
       sum +
 
-
       (project.courses?.reduce(
 
-
-        (courseSum, course)=>
-
+        (courseSum, course) =>
 
           courseSum +
 
-
           (course.todos?.reduce(
 
+            (todoSum, todo) => {
 
-            (todoSum,todo)=>{
-
-
-              if(
+              if (
                 todo.completed ||
                 !todo.startDate
-              ){
-
+              ) {
                 return todoSum;
-
               }
 
+              const todoDate = new Date(todo.startDate);
 
-
-
-              const todoDate =
-                new Date(todo.startDate);
-
-
-
-
-
-              if(
+              if (
                 todoDate >= monday &&
                 todoDate <= sunday
-              ){
+              ) {
 
                 return todoSum + (todo.hours || 0);
 
               }
 
-
-
-
               return todoSum;
-
-
 
             },
 
-
             0
-
 
           ) || 0),
 
-
-
         0
-
 
       ) || 0),
 
-
-
     0
 
-
   );
+  const personalHours =
+  todos
+    .filter(todo => !todo.done)
+    .reduce(
+      (sum, todo) =>
+        sum + (todo.hours || 0),
+      0
+    );
 
-
-
-
-
-
-
-
-  // 40시간 기준 업무 부하량
-
+  // ==========================
+  // 업무 부하량
+  // ==========================
+const totalHours =
+  weeklyHours + personalHours;
   const workload = Math.min(
 
-
-    Math.round(
-
-      (weeklyHours / 40) * 100
-
-    ),
-
+    Math.round((totalHours / 40) * 100),
 
     100
 
-
   );
 
+  let workloadColor = "text-green-600";
 
+  if (workload >= 80) {
 
+    workloadColor = "text-red-600";
 
+  } else if (workload >= 50) {
 
+    workloadColor = "text-yellow-500";
 
-
-
+  }
 
   return (
 
-
     <main className="min-h-screen bg-neutral-100">
-
 
       <div className="flex-1 p-6">
 
-
-
-
-
         <div className="mb-6">
-
 
           <h1 className="text-3xl font-bold text-neutral-900">
 
@@ -260,128 +174,57 @@ export default function Home() {
 
           </h1>
 
-
-
           <p className="mt-2 text-neutral-500">
 
             아자아자 👋
 
           </p>
 
-
         </div>
 
-
-
-
-
-
-
-
-
-        {/* 요약 대시보드 */}
-
+        {/* 요약 카드 */}
 
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
 
-
-
-
-
           <SummaryCard
-
             title="총 금액"
-
             value={`${totalAmount.toLocaleString()}원`}
-
           />
 
-
-
-
-
-
           <SummaryCard
-
             title="준비중인 과정"
-
             value={`${activeCourses}건`}
-
           />
 
-
-
-
-
-
           <SummaryCard
-
             title="예정된 교육 일정"
-
             value={`${upcomingEducations.length}건`}
-
           />
-
-
-
-
-
 
           <SummaryCard
-
             title="업무 부하량"
-
             value={`${workload}%`}
-
+            sub={`${totalHours}시간 / 40시간`}
+            color={workloadColor}
           />
-
-
-
-
 
         </div>
 
-
-
-
-
-
-
-
-
-        {/* 주간 캘린더 */}
-
+        {/* 주간 일정 */}
 
         <div className="mb-8">
 
-
           <WeeklyCalendar />
-
 
         </div>
 
-
-
-
-
-
-
-
-
         {/* 오늘 해야 할 일 */}
-
 
         <TodoList />
 
-
-
-
-
       </div>
 
-
     </main>
-
 
   );
 
