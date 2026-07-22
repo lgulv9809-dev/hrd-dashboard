@@ -65,8 +65,7 @@ type Project = {
 
   client:string;
 
-    client:string;
-      contractType:string;
+  contractType?:string;
 
 
   managerName?:string;
