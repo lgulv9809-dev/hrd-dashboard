@@ -111,6 +111,7 @@ weekDays[selectedDate.getDay()];
   text,
   done: false,
   hours: hours,
+  date: selectedDate.toISOString().slice(0,10),
 });
 
   } else {
@@ -148,7 +149,34 @@ setHours(1);
   // 개인 Todo
 
  const visiblePersonalTodos =
-  [...todos].sort((a,b)=>{
+  [...todos]
+  .filter(todo=>{
+
+    if(!todo.date)
+      return false;
+
+    const todoDate = new Date(todo.date);
+
+    return (
+      todoDate.getFullYear()
+      ===
+      selectedDate.getFullYear()
+
+      &&
+
+      todoDate.getMonth()
+      ===
+      selectedDate.getMonth()
+
+      &&
+
+      todoDate.getDate()
+      ===
+      selectedDate.getDate()
+    );
+
+  })
+  .sort((a,b)=>{
 
     if(a.done === b.done){
       return 0;
@@ -157,7 +185,6 @@ setHours(1);
     return a.done ? 1 : -1;
 
   });
-
 
 
 

@@ -11,10 +11,11 @@ import {
 
 
 type Todo = {
-  id: number;
-  text: string;
-  done: boolean;
-  hours: number;
+  id:number;
+  text:string;
+  done:boolean;
+  hours:number;
+  date:string;
 };
 
 
