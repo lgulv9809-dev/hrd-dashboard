@@ -26,10 +26,11 @@ type TodoContextType = {
 
   addTodo: (todo: Todo)=>void;
 
-  updateTodo: (
-  id:number,
-  text:string,
-  hours:number
+  updateTodo:(
+ id:number,
+ text:string,
+ hours:number,
+ done?:boolean
 )=>void;
 
   deleteTodo: (
@@ -136,16 +137,11 @@ export function TodoProvider({
 
   // Todo 수정
 
- const updateTodo=(
-
+const updateTodo = (
   id:number,
-
   text:string,
-
   hours:number,
-
-  done:boolean
-
+  done?:boolean
 )=>{
 
   setTodos((prev)=>
@@ -157,16 +153,11 @@ export function TodoProvider({
     ?
 
     {
-
-      ...todo,
-
-      text,
-
-      hours,
-
-      done,
-
-    }
+  ...todo,
+  text,
+  hours,
+  done: done ?? todo.done
+}
 
     :
 
