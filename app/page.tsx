@@ -93,12 +93,12 @@ export default function Home() {
 
             (todoSum, todo) => {
 
-              if (
-                todo.completed ||
-                !todo.startDate
-              ) {
-                return todoSum;
-              }
+             if (
+  !todo.completed ||
+  !todo.startDate
+) {
+  return todoSum;
+}
 
               const todoDate = new Date(todo.startDate);
 
@@ -126,15 +126,32 @@ export default function Home() {
     0
 
   );
-  const personalHours =
+ const personalHours =
   todos
-    .filter(todo => !todo.done)
+    .filter(todo => {
+
+  if(!todo.done)
+    return false;
+
+
+  if(!todo.date)
+    return false;
+
+
+  const todoDate = new Date(todo.date);
+
+
+  return (
+    todoDate >= monday &&
+    todoDate <= sunday
+  );
+
+})
     .reduce(
-      (sum, todo) =>
+      (sum, todo)=>
         sum + (todo.hours || 0),
       0
     );
-
   // ==========================
   // 업무 부하량
   // ==========================
