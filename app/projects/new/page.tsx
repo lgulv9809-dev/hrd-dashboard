@@ -16,20 +16,27 @@ export default function NewProjectPage() {
   const [amount, setAmount] = useState(0);
   const [status, setStatus] = useState("진행중");
 
-  const [contractType, setContractType] = useState("입찰");
+
+  const [contractType, setContractType] =
+    useState("입찰");
 
 
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [serviceType, setServiceType] =
+    useState("단타");
 
 
-  const [annual, setAnnual] = useState(false);
-  const [multiRound, setMultiRound] = useState(false);
+  const [startDate, setStartDate] =
+    useState("");
+
+  const [endDate, setEndDate] =
+    useState("");
 
 
 
   const { addProject } = useProjects();
+
   const router = useRouter();
+
 
 
 
@@ -41,13 +48,16 @@ export default function NewProjectPage() {
 
       <div className="mb-10">
 
+
         <h1 className="text-4xl font-bold">
           신규 용역 등록
         </h1>
 
+
         <p className="mt-2 text-neutral-500">
           새로운 프로젝트 정보를 등록합니다.
         </p>
+
 
       </div>
 
@@ -62,84 +72,60 @@ export default function NewProjectPage() {
 
 
 
-          <div>
-
-            <label className="text-sm text-neutral-500">
-              용역명
-            </label>
-
-            <input
-              className="mt-2 w-full rounded-lg border p-3"
-              placeholder="예) 홈페이지 제작 용역"
-              value={name}
-              onChange={(e)=>setName(e.target.value)}
-            />
-
-          </div>
+          <input
+            className="w-full rounded-lg border p-3"
+            placeholder="용역명"
+            value={name}
+            onChange={(e)=>setName(e.target.value)}
+          />
 
 
 
+          <input
+            className="w-full rounded-lg border p-3"
+            placeholder="고객사"
+            value={client}
+            onChange={(e)=>setClient(e.target.value)}
+          />
 
 
-          <div>
 
-            <label className="text-sm text-neutral-500">
-              고객사
-            </label>
-
-
-            <input
-              className="mt-2 w-full rounded-lg border p-3"
-              placeholder="고객사명"
-              value={client}
-              onChange={(e)=>setClient(e.target.value)}
-            />
+          <input
+            className="w-full rounded-lg border p-3"
+            placeholder="담당자명"
+            value={managerName}
+            onChange={(e)=>setManagerName(e.target.value)}
+          />
 
 
-            <input
-              className="mt-3 w-full rounded-lg border p-3"
-              placeholder="담당자명"
-              value={managerName}
-              onChange={(e)=>setManagerName(e.target.value)}
-            />
+
+          <input
+            className="w-full rounded-lg border p-3"
+            placeholder="전화번호"
+            value={phone}
+            onChange={(e)=>setPhone(e.target.value)}
+          />
 
 
-            <input
-              className="mt-3 w-full rounded-lg border p-3"
-              placeholder="전화번호"
-              value={phone}
-              onChange={(e)=>setPhone(e.target.value)}
-            />
 
-
-            <input
-              className="mt-3 w-full rounded-lg border p-3"
-              placeholder="메일주소"
-              value={email}
-              onChange={(e)=>setEmail(e.target.value)}
-            />
-
-          </div>
+          <input
+            className="w-full rounded-lg border p-3"
+            placeholder="메일주소"
+            value={email}
+            onChange={(e)=>setEmail(e.target.value)}
+          />
 
 
 
 
+          <input
+            className="w-full rounded-lg border p-3"
+            type="number"
+            placeholder="계약금액"
+            value={amount}
+            onChange={(e)=>setAmount(Number(e.target.value))}
+          />
 
-          <div>
-
-            <label className="text-sm text-neutral-500">
-              계약금액
-            </label>
-
-
-            <input
-              className="mt-2 w-full rounded-lg border p-3"
-              type="number"
-              value={amount}
-              onChange={(e)=>setAmount(Number(e.target.value))}
-            />
-
-          </div>
 
 
 
@@ -169,13 +155,16 @@ export default function NewProjectPage() {
                 입찰
               </option>
 
+
               <option value="수의계약">
                 수의계약
               </option>
 
-              <option value="단타">
-                단타
+
+              <option value="일반">
+                일반
               </option>
+
 
             </select>
 
@@ -187,19 +176,43 @@ export default function NewProjectPage() {
 
 
 
+
           <div>
 
             <label className="text-sm text-neutral-500">
-              용역 시작일
+              용역 형태
             </label>
 
 
-            <input
+            <select
+
               className="mt-2 w-full rounded-lg border p-3"
-              type="date"
-              value={startDate}
-              onChange={(e)=>setStartDate(e.target.value)}
-            />
+
+              value={serviceType}
+
+              onChange={(e)=>
+                setServiceType(e.target.value)
+              }
+
+            >
+
+              <option value="연간">
+                연간
+              </option>
+
+
+              <option value="다차수">
+                다차수
+              </option>
+
+
+              <option value="단타">
+                단타
+              </option>
+
+
+            </select>
+
 
           </div>
 
@@ -207,70 +220,59 @@ export default function NewProjectPage() {
 
 
 
-          <div>
-
-            <label className="text-sm text-neutral-500">
-              용역 종료일
-            </label>
-
-
-            <input
-              className="mt-2 w-full rounded-lg border p-3"
-              type="date"
-              value={endDate}
-              onChange={(e)=>setEndDate(e.target.value)}
-            />
-
-          </div>
-
-
-
-
 
 
           <div>
 
             <label className="text-sm text-neutral-500">
-              용역 유형
+              용역 기간
             </label>
 
 
-            <div className="mt-3 flex gap-5">
+            <div className="flex gap-3 mt-2">
 
 
-              <label className="flex items-center gap-2">
+              <input
 
-                <input
-                  type="checkbox"
-                  checked={annual}
-                  onChange={(e)=>setAnnual(e.target.checked)}
-                />
+                className="w-full rounded-lg border p-3"
 
-                연간 용역
+                type="date"
 
-              </label>
+                value={startDate}
+
+                onChange={(e)=>
+                  setStartDate(e.target.value)
+                }
+
+              />
 
 
+              <span className="flex items-center">
+                ~
+              </span>
 
 
+              <input
 
-              <label className="flex items-center gap-2">
+                className="w-full rounded-lg border p-3"
 
-                <input
-                  type="checkbox"
-                  checked={multiRound}
-                  onChange={(e)=>setMultiRound(e.target.checked)}
-                />
+                type="date"
 
-                다차수 용역
+                value={endDate}
 
-              </label>
+                onChange={(e)=>
+                  setEndDate(e.target.value)
+                }
+
+              />
 
 
             </div>
 
 
           </div>
+
+
 
 
 
@@ -290,7 +292,9 @@ export default function NewProjectPage() {
 
               value={status}
 
-              onChange={(e)=>setStatus(e.target.value)}
+              onChange={(e)=>
+                setStatus(e.target.value)
+              }
 
             >
 
@@ -308,6 +312,8 @@ export default function NewProjectPage() {
 
 
           </div>
+
+
 
 
 
@@ -339,15 +345,13 @@ export default function NewProjectPage() {
 
                 contractType,
 
+                serviceType,
+
                 progress:0,
 
                 startDate,
 
                 endDate,
-
-                annual,
-
-                multiRound,
 
                 courses:[]
 

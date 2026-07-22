@@ -65,21 +65,22 @@ type Project = {
 
   client:string;
 
-  contractType?:string;
-
-
   managerName?:string;
 
   phone?:string;
 
   email?:string;
 
-
   amount:number;
 
   progress:number;
 
   status:string;
+
+
+  contractType?:string; // 입찰, 수의계약, 일반
+
+  serviceType?:string; // 연간, 다차수, 단타
 
 
   startDate?:string;
