@@ -104,6 +104,7 @@ type ProjectContextType = {
 
 
   projects:Project[];
+    importProjects:(projects:Project[])=>void;
 
 
   addProject:(project:Project)=>void;
@@ -216,7 +217,7 @@ const [projects,setProjects] =
 
 useState<Project[]>(initialProjects);
 
-
+const [loaded,setLoaded] = useState(false);
 
 
 
@@ -301,8 +302,8 @@ const saved =
 localStorage.getItem("projects");
 
 
-
 if(saved){
+
 
 
 const parsed =
@@ -372,6 +373,8 @@ setProjects(fixed);
 }
 
 
+setLoaded(true);
+
 
 },[]);
 
@@ -383,30 +386,40 @@ setProjects(fixed);
 
 
 
+
+
+
+
 useEffect(()=>{
 
+if(!loaded) return;
 
 localStorage.setItem(
-
 "projects",
-
 JSON.stringify(projects)
-
 );
 
-
-},[projects]);
-
+},[projects,loaded]);
 
 
 
 
 
+
+
+
+
+const importProjects = (
+  newProjects:Project[]
+)=>{
+
+  setProjects(newProjects);
+
+};
 
 
 
 const addProject =
-
 (project:Project)=>{
 
 
@@ -920,6 +933,8 @@ return (
 value={{
 
 projects,
+
+importProjects,
 
 addProject,
 

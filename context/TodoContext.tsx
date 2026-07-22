@@ -9,7 +9,6 @@ import {
 
 
 
-
 type Todo = {
   id:number;
   text:string;
@@ -25,16 +24,18 @@ type TodoContextType = {
 
   todos: Todo[];
 
-  addTodo: (todo: Todo)=>void;
+  importTodos:(todos:Todo[])=>void;
+
+  addTodo:(todo:Todo)=>void;
 
   updateTodo:(
- id:number,
- text:string,
- hours:number,
- done?:boolean
-)=>void;
+    id:number,
+    text:string,
+    hours:number,
+    done?:boolean
+  )=>void;
 
-  deleteTodo: (
+  deleteTodo:(
     id:number
   )=>void;
 
@@ -43,8 +44,13 @@ type TodoContextType = {
 
 
 
+
+
 const TodoContext =
-  createContext<TodoContextType | null>(null);
+createContext<TodoContextType | null>(null);
+
+
+
 
 
 
@@ -52,59 +58,24 @@ const TodoContext =
 
 
 export function TodoProvider({
-  children,
+
+children,
+
 }:{
-  children:React.ReactNode;
+
+children:React.ReactNode;
+
 }){
 
 
 
-  const [todos,setTodos] =
-  useState<Todo[]>([]);
+const [todos,setTodos] =
+useState<Todo[]>([]);
 
 
 
-
-
-
-  useEffect(()=>{
-
-
-    const saved =
-      localStorage.getItem("todos");
-
-
-
-    if(saved){
-
-      setTodos(
-        JSON.parse(saved)
-      );
-
-    }
-
-
-  },[]);
-
-
-
-
-
-
-
-  useEffect(()=>{
-
-
-    localStorage.setItem(
-
-      "todos",
-
-      JSON.stringify(todos)
-
-    );
-
-
-  },[todos]);
+const [loaded,setLoaded] =
+useState(false);
 
 
 
@@ -113,60 +84,80 @@ export function TodoProvider({
 
 
 
+// 불러오기
 
-  const addTodo=(todo:Todo)=>{
-
-
-    setTodos((prev)=>[
-
-      ...prev,
-
-      todo
-
-    ]);
+useEffect(()=>{
 
 
-  };
+const saved =
+localStorage.getItem("todos");
 
 
 
+if(saved){
 
+setTodos(
+JSON.parse(saved)
+);
 
-
-
-
-
-  // Todo 수정
-
-const updateTodo = (
-  id:number,
-  text:string,
-  hours:number,
-  done?:boolean
-)=>{
-
-  setTodos((prev)=>
-
-  prev.map(todo=>
-
-    todo.id===id
-
-    ?
-
-    {
-  ...todo,
-  text,
-  hours,
-  done: done ?? todo.done
 }
 
-    :
 
-    todo
 
-  )
+setLoaded(true);
+
+
+
+},[]);
+
+
+
+
+
+
+
+
+
+
+// 저장
+
+useEffect(()=>{
+
+
+if(!loaded) return;
+
+
+
+localStorage.setItem(
+
+"todos",
+
+JSON.stringify(todos)
 
 );
+
+
+
+},[todos,loaded]);
+
+
+
+
+
+
+
+
+
+
+// 데이터 복원
+
+const importTodos = (
+
+newTodos:Todo[]
+
+)=>{
+
+setTodos(newTodos);
 
 };
 
@@ -178,25 +169,21 @@ const updateTodo = (
 
 
 
-  // Todo 삭제
+// Todo 추가
 
-  const deleteTodo=(id:number)=>{
-
-
-    setTodos((prev)=>
-
-      prev.filter(
-
-        todo=>
-
-        todo.id !== id
-
-      )
-
-    );
+const addTodo=(todo:Todo)=>{
 
 
-  };
+setTodos((prev)=>[
+
+...prev,
+
+todo
+
+]);
+
+
+};
 
 
 
@@ -205,32 +192,123 @@ const updateTodo = (
 
 
 
-  return(
 
-    <TodoContext.Provider
+// Todo 수정
 
-      value={{
+const updateTodo = (
 
-        todos,
+id:number,
 
-        addTodo,
+text:string,
 
-        updateTodo,
+hours:number,
 
-        deleteTodo,
+done?:boolean
 
-      }}
+)=>{
 
-    >
 
-      {children}
+setTodos((prev)=>
 
-    </TodoContext.Provider>
+prev.map(todo=>
 
-  );
+todo.id===id
+
+?
+
+{
+
+...todo,
+
+text,
+
+hours,
+
+done: done ?? todo.done
+
+}
+
+:
+
+todo
+
+)
+
+);
+
+
+};
+
+
+
+
+
+
+
+
+
+
+// Todo 삭제
+
+const deleteTodo=(id:number)=>{
+
+
+setTodos((prev)=>
+
+prev.filter(
+
+todo=>
+
+todo.id !== id
+
+)
+
+);
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+return(
+
+<TodoContext.Provider
+
+value={{
+
+todos,
+
+importTodos,
+
+addTodo,
+
+updateTodo,
+
+deleteTodo,
+
+}}
+
+>
+
+{children}
+
+</TodoContext.Provider>
+
+);
 
 
 }
+
+
 
 
 
@@ -241,25 +319,25 @@ const updateTodo = (
 export function useTodos(){
 
 
-  const context =
+const context =
 
-  useContext(TodoContext);
-
-
-
-  if(!context){
-
-    throw new Error(
-
-      "useTodos must be used inside TodoProvider"
-
-    );
-
-  }
+useContext(TodoContext);
 
 
 
-  return context;
+if(!context){
+
+throw new Error(
+
+"useTodos must be used inside TodoProvider"
+
+);
+
+}
+
+
+
+return context;
 
 
 }

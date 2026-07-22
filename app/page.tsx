@@ -6,6 +6,9 @@ import { useTodos } from "@/context/TodoContext";
 import SummaryCard from "@/components/SummaryCard";
 import TodoList from "@/components/TodoList";
 import WeeklyCalendar from "@/components/WeeklyCalendar";
+import DataBackup from "@/components/DataBackup";
+
+
 
 export default function Home() {
 
@@ -213,11 +216,15 @@ const totalHours =
 
         <div className="mb-6">
 
+          
+
           <h1 className="text-3xl font-bold text-neutral-900">
 
             IM 업무 생산성 지표 관리 (가을)
 
           </h1>
+          
+          <DataBackup />
 
           <p className="mt-2 text-neutral-500">
 
