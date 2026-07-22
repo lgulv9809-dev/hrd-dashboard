@@ -82,7 +82,18 @@ const [editProjectTodo, setEditProjectTodo] = useState({
 
   };
 
+const weekDays = [
+  "일",
+  "월",
+  "화",
+  "수",
+  "목",
+  "금",
+  "토"
+];
 
+const dayName =
+weekDays[selectedDate.getDay()];
 
 
 
@@ -292,7 +303,7 @@ return (
 
 <h2 className="text-xl font-bold">
 
-{selectedDate.getMonth()+1}월 {selectedDate.getDate()}일 할 일
+{selectedDate.getMonth()+1}월 {selectedDate.getDate()}일 {dayName}요일 할 일
 
 </h2>
 
