@@ -433,13 +433,12 @@ export default function WeeklyCalendar(){
 
 
 
-          <div className="mt-4 space-y-2"></div>
+          <div className="mt-4 space-y-2">
 
+{/* 진행 과정 표시 */}
 
-                   {/* 진행 과정 표시 */}
-
-            {
-            weeklyCourses
+{
+  weeklyCourses
 
             .filter(course=>{
 
@@ -523,7 +522,7 @@ export default function WeeklyCalendar(){
 
             }
 
-
+</div>
 
 
 

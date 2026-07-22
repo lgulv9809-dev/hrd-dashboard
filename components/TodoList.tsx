@@ -17,10 +17,12 @@ export default function TodoList() {
 
 
 
-  const {
-    projects,
-    updateTodo
-  } = useProjects();
+ const {
+  projects,
+  addTodo: addProjectTodo,
+  updateTodo,
+  deleteTodo: deleteProjectTodo
+} = useProjects();
 
 
 
@@ -48,7 +50,14 @@ export default function TodoList() {
   const [editPersonalText,setEditPersonalText] =
   useState("");
 
+  const [selectedCourse, setSelectedCourse] =
+useState("");
 
+const [editingProjectTodo, setEditingProjectTodo] =
+useState<number | null>(null);
+
+const [editProjectText, setEditProjectText] =
+useState("");
 
 
 
@@ -72,27 +81,44 @@ export default function TodoList() {
 
 
 
-  const handleAdd=()=>{
+  const handleAdd = () => {
 
+  if (!text.trim()) return;
 
-    if(!text.trim())
-      return;
-
+  // 과정을 선택하지 않은 경우 → 개인 Todo
+  if (selectedCourse === "") {
 
     addTodo({
-
-      id:Date.now(),
-
+      id: Date.now(),
       text,
-
-      done:false
-
+      done: false,
     });
 
+  } else {
 
-    setText("");
+    const [projectId, courseId] =
+      selectedCourse.split("-").map(Number);
 
-  };
+    addProjectTodo(
+      projectId,
+      courseId,
+      {
+        id: Date.now(),
+        title: text,
+        completed: false,
+        difficulty: "보통",
+        hours: 1,
+        startDate: selectedDate.toISOString().slice(0, 10),
+        endDate: selectedDate.toISOString().slice(0, 10),
+      }
+    );
+
+  }
+
+  setText("");
+  setSelectedCourse("");
+
+};
 
 
 
@@ -459,62 +485,78 @@ className="rounded bg-red-600 px-3 py-1 text-sm text-white"
 
 {/* 과정 Todo */}
 
-
-
 {
-
-filteredProjectTodos.map(todo=>(
-
+filteredProjectTodos.map((todo)=>(
 
 <div
-
 key={todo.id}
-
 className="rounded-lg bg-green-50 p-4"
-
-
 >
 
-
-<div className="flex justify-between items-center">
-
-
+<div className="flex items-center justify-between">
 
 <div className="flex items-center gap-3">
 
-
-
 <input
-
 type="checkbox"
-
 checked={todo.completed}
+onChange={()=>{
 
-onChange={()=>updateTodo(
-
+updateTodo(
 todo.projectId,
-
 todo.courseId,
-
 {
-
 ...todo,
-
 completed:!todo.completed
-
 }
 
-)}
+);
 
+}}
 />
-
-
-
-
-
 
 <div>
 
+{
+editingProjectTodo===todo.id ?
+
+<div className="flex gap-2">
+
+<input
+className="rounded border px-2 py-1"
+value={editProjectText}
+onChange={(e)=>
+setEditProjectText(e.target.value)
+}
+/>
+
+<button
+className="rounded bg-green-700 px-3 py-1 text-white text-sm"
+onClick={()=>{
+
+updateTodo(
+todo.projectId,
+todo.courseId,
+{
+...todo,
+title:editProjectText
+}
+);
+
+setEditingProjectTodo(null);
+
+}}
+>
+
+저장
+
+</button>
+
+</div>
+
+:
+
+<>
 
 <p className="font-bold">
 
@@ -522,18 +564,11 @@ completed:!todo.completed
 
 </p>
 
-
-
 <p className="text-sm text-neutral-500">
 
-{todo.projectName}
-
-{" / "}
-
-{todo.courseName}
+{todo.projectName} / {todo.courseName}
 
 </p>
-
 
 <p className="text-xs text-neutral-400">
 
@@ -541,23 +576,63 @@ completed:!todo.completed
 
 </p>
 
+</>
+
+}
 
 </div>
 
+</div>
 
+<div className="flex gap-2">
+
+{
+editingProjectTodo!==todo.id &&
+
+<button
+className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
+onClick={()=>{
+
+setEditingProjectTodo(todo.id);
+setEditProjectText(todo.title);
+
+}}
+>
+
+수정
+
+</button>
+
+}
+
+<button
+className="rounded bg-red-600 px-3 py-1 text-sm text-white"
+onClick={()=>{
+
+if(confirm("삭제하시겠습니까?")){
+
+deleteProjectTodo(
+todo.projectId,
+todo.courseId,
+todo.id
+);
+
+}
+
+}}
+>
+
+삭제
+
+</button>
 
 </div>
 
-
 </div>
 
-
 </div>
-
 
 ))
-
-
 }
 
 
@@ -599,43 +674,49 @@ filteredProjectTodos.length===0 && (
 {/* 개인 업무 추가 */}
 
 
-<div className="mt-6 flex gap-3 border-t pt-5">
+<div className="mt-6 border-t pt-5 space-y-3">
 
-
-<input
-
-className="flex-1 rounded-lg border p-3"
-
-placeholder="새 업무 입력"
-
-value={text}
-
-onChange={(e)=>
-setText(e.target.value)
-}
-
-onKeyDown={(e)=>{
-
-if(e.key==="Enter")
-handleAdd();
-
-}}
-
-/>
-
-
-
-<button
-
-onClick={handleAdd}
-
-className="rounded-lg bg-green-800 px-5 text-white"
-
+<select
+  className="w-full rounded-lg border p-3"
+  value={selectedCourse}
+  onChange={(e) => setSelectedCourse(e.target.value)}
 >
+  <option value="">개인 할 일</option>
 
-추가
+  {projects.flatMap(project =>
+    project.courses.map(course => (
+      <option
+        key={`${project.id}-${course.id}`}
+        value={`${project.id}-${course.id}`}
+      >
+        {project.name} / {course.name}
+      </option>
+    ))
+  )}
+</select>
 
-</button>
+<div className="flex gap-3">
+
+  <input
+    className="flex-1 rounded-lg border p-3"
+    placeholder="새 업무 입력"
+    value={text}
+    onChange={(e)=>setText(e.target.value)}
+    onKeyDown={(e)=>{
+      if(e.key==="Enter"){
+        handleAdd();
+      }
+    }}
+  />
+
+  <button
+    onClick={handleAdd}
+    className="rounded-lg bg-green-800 px-5 text-white"
+  >
+    추가
+  </button>
+
+</div>
 
 
 </div>
