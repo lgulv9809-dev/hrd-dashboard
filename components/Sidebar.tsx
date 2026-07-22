@@ -7,22 +7,24 @@ export default function Sidebar() {
 
   const pathname = usePathname();
 
-  const menu = [
-    {
-      name: "🏠 대시보드",
-      href: "/",
-    },
-    {
-      name: "📂 진행중인 과정관리",
-      href: "/projects",
-    },
-    {
-      name: "✅ 완료된 과정관리",
-      href: "/completed",
-    },
- 
-    
-  ];
+const menu = [
+  {
+    name: "🏠 대시보드",
+    href: "/",
+  },
+  {
+    name: "📂 진행중인 과정관리",
+    href: "/projects",
+  },
+  {
+    name: "✅ 완료된 과정관리",
+    href: "/completed",
+  },
+  {
+    name: "📊 업무 추이",
+    href: "/stats",
+  },
+];
 
   return (
 

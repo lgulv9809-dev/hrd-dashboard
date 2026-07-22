@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useProjects } from "@/context/ProjectContext";
 
+
 export default function NewProjectPage() {
 
 
@@ -14,6 +15,8 @@ export default function NewProjectPage() {
   const [email, setEmail] = useState("");
   const [amount, setAmount] = useState(0);
   const [status, setStatus] = useState("진행중");
+
+  const [contractType, setContractType] = useState("입찰");
 
 
   const [startDate, setStartDate] = useState("");
@@ -30,6 +33,7 @@ export default function NewProjectPage() {
 
 
 
+
   return (
 
     <main className="min-h-screen bg-neutral-100 p-10">
@@ -41,11 +45,9 @@ export default function NewProjectPage() {
           신규 용역 등록
         </h1>
 
-
         <p className="mt-2 text-neutral-500">
           새로운 프로젝트 정보를 등록합니다.
         </p>
-
 
       </div>
 
@@ -66,17 +68,11 @@ export default function NewProjectPage() {
               용역명
             </label>
 
-
             <input
-
               className="mt-2 w-full rounded-lg border p-3"
-
               placeholder="예) 홈페이지 제작 용역"
-
               value={name}
-
               onChange={(e)=>setName(e.target.value)}
-
             />
 
           </div>
@@ -93,54 +89,34 @@ export default function NewProjectPage() {
 
 
             <input
-
               className="mt-2 w-full rounded-lg border p-3"
-
               placeholder="고객사명"
-
               value={client}
-
               onChange={(e)=>setClient(e.target.value)}
-
             />
 
 
             <input
-
               className="mt-3 w-full rounded-lg border p-3"
-
               placeholder="담당자명"
-
               value={managerName}
-
               onChange={(e)=>setManagerName(e.target.value)}
-
             />
 
 
             <input
-
               className="mt-3 w-full rounded-lg border p-3"
-
               placeholder="전화번호"
-
               value={phone}
-
               onChange={(e)=>setPhone(e.target.value)}
-
             />
 
 
             <input
-
               className="mt-3 w-full rounded-lg border p-3"
-
               placeholder="메일주소"
-
               value={email}
-
               onChange={(e)=>setEmail(e.target.value)}
-
             />
 
           </div>
@@ -157,18 +133,55 @@ export default function NewProjectPage() {
 
 
             <input
-
               className="mt-2 w-full rounded-lg border p-3"
-
               type="number"
-
               value={amount}
-
               onChange={(e)=>setAmount(Number(e.target.value))}
-
             />
 
           </div>
+
+
+
+
+
+
+          <div>
+
+            <label className="text-sm text-neutral-500">
+              계약 유형
+            </label>
+
+
+            <select
+
+              className="mt-2 w-full rounded-lg border p-3"
+
+              value={contractType}
+
+              onChange={(e)=>
+                setContractType(e.target.value)
+              }
+
+            >
+
+              <option value="입찰">
+                입찰
+              </option>
+
+              <option value="수의계약">
+                수의계약
+              </option>
+
+              <option value="단타">
+                단타
+              </option>
+
+            </select>
+
+
+          </div>
+
 
 
 
@@ -182,15 +195,10 @@ export default function NewProjectPage() {
 
 
             <input
-
               className="mt-2 w-full rounded-lg border p-3"
-
               type="date"
-
               value={startDate}
-
               onChange={(e)=>setStartDate(e.target.value)}
-
             />
 
           </div>
@@ -207,18 +215,14 @@ export default function NewProjectPage() {
 
 
             <input
-
               className="mt-2 w-full rounded-lg border p-3"
-
               type="date"
-
               value={endDate}
-
               onChange={(e)=>setEndDate(e.target.value)}
-
             />
 
           </div>
+
 
 
 
@@ -237,13 +241,9 @@ export default function NewProjectPage() {
               <label className="flex items-center gap-2">
 
                 <input
-
                   type="checkbox"
-
                   checked={annual}
-
                   onChange={(e)=>setAnnual(e.target.checked)}
-
                 />
 
                 연간 용역
@@ -257,13 +257,9 @@ export default function NewProjectPage() {
               <label className="flex items-center gap-2">
 
                 <input
-
                   type="checkbox"
-
                   checked={multiRound}
-
                   onChange={(e)=>setMultiRound(e.target.checked)}
-
                 />
 
                 다차수 용역
@@ -275,6 +271,7 @@ export default function NewProjectPage() {
 
 
           </div>
+
 
 
 
@@ -317,7 +314,6 @@ export default function NewProjectPage() {
 
 
 
-
           <button
 
             onClick={()=>{
@@ -340,6 +336,8 @@ export default function NewProjectPage() {
                 amount,
 
                 status,
+
+                contractType,
 
                 progress:0,
 

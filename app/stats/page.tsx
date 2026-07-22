@@ -1,182 +1,419 @@
 "use client";
 
 import { useProjects } from "@/context/ProjectContext";
-import { useEducations } from "@/context/EducationContext";
+import { useTodos } from "@/context/TodoContext";
 
 
-export default function StatsPage() {
+export default function StatsPage(){
 
-  const { projects } = useProjects();
-  const { educations } = useEducations();
 
+const { projects } = useProjects();
 
-  const totalAmount = projects.reduce(
-    (sum, project) => sum + project.amount,
-    0
-  );
+const { todos } = useTodos();
 
 
-  const activeProjects =
-    projects.filter(
-      (project)=>project.status==="진행중"
-    ).length;
 
+// 계약 금액
 
-  const completeProjects =
-    projects.filter(
-      (project)=>project.status==="완료"
-    ).length;
+const totalAmount =
+projects.reduce(
+(sum,project)=>
+sum + project.amount,
+0
+);
 
 
-  const averageProgress =
-    projects.length
-      ? Math.round(
-          projects.reduce(
-            (sum,p)=>sum+p.progress,
-            0
-          ) / projects.length
-        )
-      : 0;
 
+// 용역 현황
 
+const activeProjects =
+projects.filter(
+project=>project.status==="진행중"
+).length;
 
-  const plannedEducation =
-    educations.filter(
-      (e)=>e.status==="예정"
-    ).length;
 
+const completeProjects =
+projects.filter(
+project=>project.status==="완료"
+).length;
 
-  const completeEducation =
-    educations.filter(
-      (e)=>e.status==="완료"
-    ).length;
 
 
+// 과정 통계
 
-  return (
+const allCourses =
+projects.flatMap(
+project=>project.courses ?? []
+);
 
-    <main className="min-h-screen bg-neutral-100 p-10">
 
+const totalCourses =
+allCourses.length;
 
-      <h1 className="text-4xl font-bold">
-        통계
-      </h1>
 
+const completeCourses =
+allCourses.filter(
+course=>course.status==="완료"
+).length;
 
-      <p className="mt-2 text-neutral-500">
-        업무 현황을 분석합니다.
-      </p>
 
+const activeCourses =
+totalCourses - completeCourses;
 
 
-      <div className="mt-10 grid gap-6 md:grid-cols-3">
 
 
-        <div className="rounded-2xl bg-white p-6 shadow">
-          <p className="text-neutral-500">
-            총 계약금액
-          </p>
 
-          <h2 className="mt-3 text-3xl font-bold">
-            {totalAmount.toLocaleString()}원
-          </h2>
-        </div>
+// 프로젝트 완료 업무 시간
 
+const projectHours =
+projects.reduce(
 
-        <div className="rounded-2xl bg-white p-6 shadow">
-          <p className="text-neutral-500">
-            평균 진행률
-          </p>
+(sum,project)=>
 
-          <h2 className="mt-3 text-3xl font-bold">
-            {averageProgress}%
-          </h2>
-        </div>
+sum +
 
+(project.courses?.reduce(
 
-        <div className="rounded-2xl bg-white p-6 shadow">
-          <p className="text-neutral-500">
-            전체 교육
-          </p>
+(courseSum,course)=>
 
-          <h2 className="mt-3 text-3xl font-bold">
-            {educations.length}건
-          </h2>
-        </div>
+courseSum +
 
+(course.todos?.reduce(
 
-      </div>
+(todoSum,todo)=>
 
+todoSum +
 
+(
+todo.completed
+?
+(todo.hours || 0)
+:
+0
+),
 
+0
 
-      <div className="mt-10 grid gap-6 md:grid-cols-2">
+) || 0),
 
+0
 
-        <div className="rounded-2xl bg-white p-6 shadow">
+) || 0),
 
-          <h2 className="text-xl font-bold">
-            용역 현황
-          </h2>
+0
 
+);
 
-          <p className="mt-4">
-            진행중 {activeProjects}건
-          </p>
 
 
-          <p className="mt-2">
-            완료 {completeProjects}건
-          </p>
 
 
-          <div className="mt-5 h-3 rounded-full bg-neutral-200">
+// 개인 완료 업무 시간
 
-            <div
-              className="h-3 rounded-full bg-green-700"
-              style={{
-                width:`${
-                  projects.length
-                    ? (completeProjects/projects.length)*100
-                    : 0
-                }%`
-              }}
-            />
+const personalHours =
+todos.reduce(
 
-          </div>
+(sum,todo)=>
 
-        </div>
+sum +
 
+(
+todo.done
+?
+(todo.hours || 0)
+:
+0
+),
 
+0
 
+);
 
-        <div className="rounded-2xl bg-white p-6 shadow">
 
 
-          <h2 className="text-xl font-bold">
-            교육 현황
-          </h2>
 
+const totalHours =
+projectHours + personalHours;
 
-          <p className="mt-4">
-            예정 {plannedEducation}건
-          </p>
 
 
-          <p className="mt-2">
-            완료 {completeEducation}건
-          </p>
 
 
-        </div>
 
 
+return(
 
-      </div>
 
+<main className="
+min-h-screen
+bg-neutral-100
+p-10
+">
 
-    </main>
 
-  );
+
+<h1 className="
+text-4xl
+font-bold
+">
+
+업무 추이
+
+</h1>
+
+
+
+<p className="
+mt-2
+text-neutral-500
+">
+
+업무 진행 현황과 생산성 변화를 분석합니다.
+
+</p>
+
+
+
+
+
+
+
+
+<div className="
+mt-10
+grid
+gap-6
+md:grid-cols-4
+">
+
+
+
+<Card
+
+title="총 계약금액"
+
+value={`${totalAmount.toLocaleString()}원`}
+
+/>
+
+
+
+
+<Card
+
+title="진행중 용역"
+
+value={`${activeProjects}건`}
+
+/>
+
+
+
+
+<Card
+
+title="완료 용역"
+
+value={`${completeProjects}건`}
+
+/>
+
+
+
+
+<Card
+
+title="전체 과정"
+
+value={`${totalCourses}건`}
+
+/>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div className="
+mt-10
+grid
+gap-6
+md:grid-cols-3
+">
+
+
+
+<Card
+
+title="진행중 과정"
+
+value={`${activeCourses}건`}
+
+/>
+
+
+
+
+<Card
+
+title="완료 과정"
+
+value={`${completeCourses}건`}
+
+/>
+
+
+
+
+<Card
+
+title="총 업무시간"
+
+value={`${totalHours}시간`}
+
+/>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div className="
+mt-10
+rounded-2xl
+bg-white
+p-6
+shadow
+">
+
+
+
+<h2 className="
+text-xl
+font-bold
+">
+
+업무 시간 분석
+
+</h2>
+
+
+
+
+<p className="mt-4">
+
+프로젝트 업무 :
+
+{projectHours}시간
+
+</p>
+
+
+
+
+<p className="mt-2">
+
+개인 업무 :
+
+{personalHours}시간
+
+</p>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+</main>
+
+
+);
+
+}
+
+
+
+
+
+
+
+
+
+function Card({
+
+title,
+
+value
+
+}:{
+
+title:string;
+
+value:string;
+
+}){
+
+
+return(
+
+
+<div className="
+rounded-2xl
+bg-white
+p-6
+shadow
+">
+
+
+
+<p className="
+text-neutral-500
+">
+
+{title}
+
+</p>
+
+
+
+
+<h2 className="
+mt-3
+text-3xl
+font-bold
+">
+
+{value}
+
+</h2>
+
+
+
+</div>
+
+
+);
+
 
 }
