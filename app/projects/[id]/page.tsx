@@ -96,6 +96,12 @@ manager:""
 const [editTodoId,setEditTodoId]=useState<number|null>(null);
 
 const [editTodoTitle,setEditTodoTitle]=useState("");
+const [editTodoHours,setEditTodoHours] = useState(1);
+
+const [editTodoStartDate,setEditTodoStartDate] = useState("");
+
+const [editTodoEndDate,setEditTodoEndDate] = useState("");
+const [editTodoDifficulty,setEditTodoDifficulty] = useState("보통");
 
 const [todoOpen,setTodoOpen]=useState<number|null>(null);
 const [todoForm,setTodoForm]=useState({
@@ -953,7 +959,58 @@ setEditTodoTitle(e.target.value)
 }
 
 />
+<select
+className="border rounded px-2 py-1"
 
+value={editTodoDifficulty}
+
+onChange={(e)=>
+setEditTodoDifficulty(e.target.value)
+}
+
+>
+
+<option value="하">
+쉬움
+</option>
+
+<option value="보통">
+보통
+</option>
+
+<option value="상">
+어려움
+</option>
+
+</select>
+<input
+type="number"
+className="border rounded px-2 py-1 w-20"
+value={editTodoHours}
+onChange={(e)=>
+setEditTodoHours(Number(e.target.value))
+}
+/>
+
+
+<input
+type="date"
+className="border rounded px-2 py-1"
+value={editTodoStartDate}
+onChange={(e)=>
+setEditTodoStartDate(e.target.value)
+}
+/>
+
+
+<input
+type="date"
+className="border rounded px-2 py-1"
+value={editTodoEndDate}
+onChange={(e)=>
+setEditTodoEndDate(e.target.value)
+}
+/>
 
 <button
 
@@ -967,16 +1024,21 @@ updateTodo(
 project.id,
 
 course.id,
-
 {
+  ...todo,
 
-...todo,
+  title:editTodoTitle,
 
-title:editTodoTitle
+  hours:editTodoHours,
 
+  startDate:editTodoStartDate,
+
+  difficulty:editTodoDifficulty,
+  endDate:editTodoEndDate
+  
 }
-
 );
+
 
 
 setEditTodoId(null);
@@ -1050,6 +1112,13 @@ onClick={()=>{
 setEditTodoId(todo.id);
 
 setEditTodoTitle(todo.title);
+
+setEditTodoHours(todo.hours || 1);
+
+setEditTodoStartDate(todo.startDate || "");
+
+setEditTodoEndDate(todo.endDate || "");
+setEditTodoDifficulty(todo.difficulty || "보통");
 
 }}
 

@@ -136,14 +136,14 @@ setHours(1);
 
   // 개인 Todo
 
-  const visiblePersonalTodos =
-  todos.filter(todo=>{
+ const visiblePersonalTodos =
+  [...todos].sort((a,b)=>{
 
-    if(todo.done)
-      return false;
+    if(a.done === b.done){
+      return 0;
+    }
 
-
-    return true;
+    return a.done ? 1 : -1;
 
   });
 
@@ -163,22 +163,7 @@ setHours(1);
     project.courses?.flatMap(course =>
 
 
-      course.todos
-
-      ?.filter(todo=>{
-
-
-        if(todo.completed)
-          return false;
-
-
-        return true;
-
-
-      })
-
-
-      .map(todo=>({
+      course.todos?.map(todo=>({
 
 
         ...todo,
@@ -258,13 +243,18 @@ setHours(1);
 
   filteredProjectTodos.sort((a,b)=>{
 
+  if(a.completed !== b.completed){
 
-    return new Date(a.startDate).getTime()
-    -
-    new Date(b.startDate).getTime();
+    return a.completed ? 1 : -1;
+
+  }
 
 
-  });
+  return new Date(a.startDate).getTime()
+  -
+  new Date(b.startDate).getTime();
+
+});
 
 const totalProjectHours =
 filteredProjectTodos.reduce(
@@ -374,7 +364,7 @@ visiblePersonalTodos.map(todo=>(
 
 key={todo.id}
 
-className="flex items-center justify-between rounded-lg bg-neutral-50 p-4"
+className="flex items-center justify-between rounded-lg bg-green-50 p-4"
 
 >
 
@@ -447,8 +437,29 @@ setEditingPersonalId(null);
 
 (
 
-<span>
+<div className="flex items-center gap-3">
 
+<input
+  type="checkbox"
+  checked={todo.done}
+  onChange={()=>{
+    updatePersonalTodo(
+  todo.id,
+  todo.text,
+  todo.hours || 0,
+  !todo.done
+);
+  }}
+/>
+
+
+<span
+className={
+  todo.done
+  ? "line-through text-neutral-400"
+  : ""
+}
+>
 {todo.text}
 
 <span className="ml-2 text-sm text-neutral-500">
@@ -456,6 +467,8 @@ setEditingPersonalId(null);
 </span>
 
 </span>
+
+</div>
 
 )
 
@@ -555,11 +568,7 @@ updateTodo(
   todo.courseId,
   {
     ...todo,
-    title: editProjectTodo.title,
-    difficulty: editProjectTodo.difficulty,
-    hours: editProjectTodo.hours,
-    startDate: editProjectTodo.startDate,
-    endDate: editProjectTodo.endDate,
+    completed: !todo.completed,
   }
 );
 
@@ -684,7 +693,13 @@ editingProjectTodo===todo.id ?
 
 <>
 
-<p className="font-bold">
+<p
+className={
+  todo.completed
+  ? "font-bold line-through text-neutral-400"
+  : "font-bold"
+}
+>
 
 {todo.title}
 

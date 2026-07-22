@@ -136,41 +136,45 @@ export function TodoProvider({
 
   // Todo 수정
 
-  const updateTodo=(
+ const updateTodo=(
 
   id:number,
 
   text:string,
 
-  hours:number
+  hours:number,
+
+  done:boolean
 
 )=>{
 
   setTodos((prev)=>
 
-    prev.map(todo=>
+  prev.map(todo=>
 
-      todo.id===id
+    todo.id===id
 
-      ?
+    ?
 
-      {
+    {
 
-        ...todo,
+      ...todo,
 
-        text,
+      text,
 
-        hours,
+      hours,
 
-      }
+      done,
 
-      :
+    }
 
-      todo
+    :
 
-    )
+    todo
 
-  );
+  )
+
+);
 
 };
 
