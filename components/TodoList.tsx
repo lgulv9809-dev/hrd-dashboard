@@ -301,7 +301,11 @@ filteredProjectTodos.reduce(
 );
 
 const totalPersonalHours =
-visiblePersonalTodos.length;
+visiblePersonalTodos.reduce(
+  (sum, todo) =>
+    sum + (todo.hours || 0),
+  0
+);
 
 const totalHours =
 totalProjectHours + totalPersonalHours;
