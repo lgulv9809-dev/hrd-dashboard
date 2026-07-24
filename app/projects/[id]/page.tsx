@@ -42,7 +42,20 @@ function calculateDifficulty(todos: any[]) {
 
 }
 
+function calculateTotalHours(todos:any[]) {
 
+  if(!todos || todos.length === 0){
+    return 0;
+  }
+
+
+  return todos.reduce(
+    (sum, todo) =>
+      sum + (todo.hours || 0),
+    0
+  );
+
+}
 
 export default function ProjectDetailPage(){
 
