@@ -345,9 +345,12 @@ export default function NewProjectPage() {
 
                 contractType,
 
-                serviceType,
+               serviceType,
 
-                progress:0,
+annual: serviceType === "연간",
+multiRound: serviceType === "다차수",
+
+progress:0,
 
                 startDate,
 
