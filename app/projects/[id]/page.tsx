@@ -21,22 +21,26 @@ function calculateProgress(todos:any[]) {
 }
 
 
-function calculateDifficulty(todos: any[]) {
+function calculateDifficulty(todos:any[]) {
 
   const count = todos?.length || 0;
 
   const totalHours = (todos || []).reduce(
-    (sum, todo) => sum + (todo.hours || 0),
+    (sum,todo)=>
+      sum + (Number(todo.hours) || 0),
     0
   );
 
-  if (count >= 15 || totalHours >= 20) {
+
+  if(count >= 12 || totalHours >= 15){
     return "상";
   }
 
-  if (count >= 10 || totalHours >= 15) {
+
+  if(count >= 8 || totalHours >= 10){
     return "중";
   }
+
 
   return "하";
 
@@ -101,7 +105,8 @@ name:"",
 startDate:"",
 endDate:"",
 people:0,
-manager:""
+manager:"",
+difficulty:"하"
 
 });
 
@@ -159,7 +164,11 @@ manager:courseForm.manager,
 
 todos:[],
 
-status:"진행중"
+status:"진행중",
+
+difficulty:courseForm.difficulty,
+
+difficultyManual:true
 
 }
 
@@ -172,10 +181,10 @@ name:"",
 startDate:"",
 endDate:"",
 people:0,
-manager:""
+manager:"",
+difficulty:"하"
 
 });
-
 
 setShowForm(false);
 
@@ -347,137 +356,120 @@ className="bg-green-800 text-white rounded-lg px-5 py-3"
 
 
 
-{
-showForm &&
+{showForm && (
+  <div className="mt-5 grid gap-3">
 
-<div className="mt-5 grid gap-3">
-
-
-<input
-
-className="border p-3 rounded"
-
-placeholder="과정명"
-
-value={courseForm.name}
-
-onChange={(e)=>
-setCourseForm({
-...courseForm,
-name:e.target.value
-})
-}
-
-/>
+    <input
+      className="border p-3 rounded"
+      placeholder="과정명"
+      value={courseForm.name}
+      onChange={(e)=>
+        setCourseForm({
+          ...courseForm,
+          name:e.target.value
+        })
+      }
+    />
 
 
-
-<input
-
-className="border p-3 rounded"
-
-placeholder="담당자"
-
-value={courseForm.manager}
-
-onChange={(e)=>
-setCourseForm({
-...courseForm,
-manager:e.target.value
-})
-}
-
-/>
-
-<input
-
-type="date"
-
-className="border p-3 rounded"
-
-value={courseForm.startDate}
-
-onChange={(e)=>
-setCourseForm({
-...courseForm,
-startDate:e.target.value
-})
-}
-
-/>
+    <input
+      className="border p-3 rounded"
+      placeholder="담당자"
+      value={courseForm.manager}
+      onChange={(e)=>
+        setCourseForm({
+          ...courseForm,
+          manager:e.target.value
+        })
+      }
+    />
 
 
-<input
-
-type="date"
-
-className="border p-3 rounded"
-
-value={courseForm.endDate}
-
-onChange={(e)=>
-setCourseForm({
-...courseForm,
-endDate:e.target.value
-})
-}
-
-/>
-
-<button
-
-onClick={handleAddCourse}
-
-className="bg-blue-600 text-white rounded p-3"
-
->
-
-저장
-
-</button>
-
-<button
-
-onClick={()=>{
-
-  setShowForm(false);
-
-  setCourseForm({
-
-    name:"",
-    startDate:"",
-    endDate:"",
-    people:0,
-    manager:""
-
-  });
-
-}}
-
-className="bg-neutral-500 text-white rounded p-3"
-
->
-
-취소
-
-</button>
-</div>
-
-}
+    <input
+      type="date"
+      className="border p-3 rounded"
+      value={courseForm.startDate}
+      onChange={(e)=>
+        setCourseForm({
+          ...courseForm,
+          startDate:e.target.value
+        })
+      }
+    />
 
 
+    <select
+      className="border p-3 rounded"
+      value={courseForm.difficulty}
+      onChange={(e)=>
+        setCourseForm({
+          ...courseForm,
+          difficulty:e.target.value as "하" | "중" | "상"
+        })
+      }
+    >
+
+      <option value="하">
+        하 (자동 기준보다 낮음)
+      </option>
+
+      <option value="중">
+        중
+      </option>
+
+      <option value="상">
+        상
+      </option>
+
+    </select>
 
 
+    <input
+      type="date"
+      className="border p-3 rounded"
+      value={courseForm.endDate}
+      onChange={(e)=>
+        setCourseForm({
+          ...courseForm,
+          endDate:e.target.value
+        })
+      }
+    />
 
 
+    <button
+      onClick={handleAddCourse}
+      className="bg-blue-600 text-white rounded p-3"
+    >
+      저장
+    </button>
 
 
+    <button
+      onClick={()=>{
+        setShowForm(false);
+
+        setCourseForm({
+          name:"",
+          startDate:"",
+          endDate:"",
+          people:0,
+          manager:"",
+          difficulty:"하"
+        });
+      }}
+      className="bg-neutral-500 text-white rounded p-3"
+    >
+      취소
+    </button>
+
+
+  </div>
+)}
 
 <div className="mt-8 space-y-5">
 
-
 {
-
 
 [...(project.courses ?? [])]
 .sort((a, b) => {
@@ -537,10 +529,17 @@ className="bg-neutral-500 text-white rounded p-3"
 })
 
 
-.map((course)=>(
+.map((course)=>{
+
+const difficulty =
+  course.difficultyManual
+  ? course.difficulty
+  : calculateDifficulty(course.todos);
+
+
+return (
 
 <div
-
 key={course.id}
 
 className="rounded-xl border bg-white p-5"
@@ -559,17 +558,18 @@ className="rounded-xl border bg-white p-5"
 
 <span
   className={`
-    flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-white
+    flex h-7 w-7 items-center justify-center rounded-full
+    text-sm font-bold text-white
     ${
-      calculateDifficulty(course.todos) === "상"
+      difficulty === "상"
       ? "bg-red-500"
-      : calculateDifficulty(course.todos) === "중"
+      : difficulty === "중"
       ? "bg-yellow-400"
       : "bg-green-500"
     }
   `}
 >
-  {calculateDifficulty(course.todos)}
+  {difficulty}
 </span>
 
 </div>
