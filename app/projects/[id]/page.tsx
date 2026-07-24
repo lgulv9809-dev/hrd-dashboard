@@ -468,67 +468,61 @@ className="bg-neutral-500 text-white rounded p-3"
 
 
 [...(project.courses ?? [])]
-.sort((a,b)=>{
+.sort((a, b) => {
 
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
+  const aStart = new Date(a.startDate || "9999-12-31");
+  const bStart = new Date(b.startDate || "9999-12-31");
 
-  const aProgress = calculateProgress(a.todos);
-  const bProgress = calculateProgress(b.todos);
+  const aEnd = new Date(a.endDate || "9999-12-31");
+  const bEnd = new Date(b.endDate || "9999-12-31");
 
+  aStart.setHours(0, 0, 0, 0);
+  bStart.setHours(0, 0, 0, 0);
 
+  aEnd.setHours(23, 59, 59, 999);
+  bEnd.setHours(23, 59, 59, 999);
 
-  // 완료 과정 최하단
-  if(aProgress === 100 && bProgress !== 100){
-    return 1;
+  // 진행 중 여부
+  const aOngoing = aStart <= today && aEnd >= today;
+  const bOngoing = bStart <= today && bEnd >= today;
+
+  // 예정 여부
+  const aFuture = aStart > today;
+  const bFuture = bStart > today;
+
+  // 지난 과정 여부
+  const aPast = aEnd < today;
+  const bPast = bEnd < today;
+
+  // 1. 진행 중 → 맨 위
+  if (aOngoing && !bOngoing) return -1;
+  if (!aOngoing && bOngoing) return 1;
+
+  // 진행 중끼리 → 시작일 빠른 순
+  if (aOngoing && bOngoing) {
+    return aStart.getTime() - bStart.getTime();
   }
 
+  // 2. 예정 → 진행 중 다음
+  if (aFuture && !bFuture) return -1;
+  if (!aFuture && bFuture) return 1;
 
-  if(aProgress !== 100 && bProgress === 100){
-    return -1;
+  // 예정끼리 → 시작일 오름차순
+  if (aFuture && bFuture) {
+    return aStart.getTime() - bStart.getTime();
   }
 
-
-
-  const aStart = new Date(
-    a.startDate || "9999-12-31"
-  );
-
-  const bStart = new Date(
-    b.startDate || "9999-12-31"
-  );
-
-
-  const aEnd = new Date(
-    a.endDate || "9999-12-31"
-  );
-
-  const bEnd = new Date(
-    b.endDate || "9999-12-31"
-  );
-
-
-
-  const aFinished =
-    aEnd < today;
-
-  const bFinished =
-    bEnd < today;
-
-
-
-  // 둘 다 이미 지난 교육
-  // → 최근 종료 순
-  if(aFinished && bFinished){
-
-    return (
-      bEnd.getTime()
-      -
-      aEnd.getTime()
-    );
-
+  // 3. 지난 과정 → 최근 종료 순
+  if (aPast && bPast) {
+    return bEnd.getTime() - aEnd.getTime();
   }
 
+  return 0;
+
+})
 
 
   // 지난 교육은 아래로
