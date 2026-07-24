@@ -884,12 +884,29 @@ className="flex-1 bg-neutral-400 text-white rounded p-2"
 
 {
 [...(course.todos ?? [])]
-.sort(
-  (a,b)=>
+.sort((a,b)=>{
+
+
+  // 완료된 Todo는 아래로 이동
+  if(a.completed && !b.completed){
+    return 1;
+  }
+
+
+  if(!a.completed && b.completed){
+    return -1;
+  }
+
+
+  // 같은 상태끼리는 시작일 순서
+  return (
     new Date(a.startDate || "9999-12-31").getTime()
     -
     new Date(b.startDate || "9999-12-31").getTime()
-)
+  );
+
+
+})
 .map((todo)=>(
 
 
