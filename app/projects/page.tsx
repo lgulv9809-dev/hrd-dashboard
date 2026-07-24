@@ -231,13 +231,7 @@ export default function ProjectsPage() {
                   courses={project.courses}
 
 
-                  difficulty={
-
-                    calculateProjectDifficulty(
-                      project.courses
-                    )
-
-                  }
+                 
 
 
 

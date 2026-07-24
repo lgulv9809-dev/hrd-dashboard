@@ -184,14 +184,7 @@ export default function CompletedPage() {
 
 
 
-                  difficulty={
-
-                    calculateProjectDifficulty(
-                      project.courses
-                    )
-
-                  }
-
+          
 
 
                   annual={
