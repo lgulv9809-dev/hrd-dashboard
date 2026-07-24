@@ -5,18 +5,25 @@ import { useParams, useRouter } from "next/navigation";
 import { useProjects } from "@/context/ProjectContext";
 
 
-export default function EditProjectPage() {
+export default function EditProjectPage(){
 
 
   const { id } = useParams();
+
   const router = useRouter();
 
-  const { projects, updateProject } = useProjects();
+
+  const {
+    projects,
+    updateProject
+  } = useProjects();
+
 
 
   const project = projects.find(
-    (p) => p.id === Number(id)
+    (p)=>p.id === Number(id)
   );
+
 
 
 
@@ -25,21 +32,26 @@ export default function EditProjectPage() {
   const [managerName,setManagerName] = useState("");
   const [phone,setPhone] = useState("");
   const [email,setEmail] = useState("");
+
   const [amount,setAmount] = useState(0);
-  const [status,setStatus] = useState("진행중");
+
+  const [status,setStatus] =
+    useState("진행중");
+
 
 
   // 계약 유형
+
   const [contractType,setContractType] =
     useState("입찰");
 
 
-  // 연간 / 다차수
-  const [annual,setAnnual] =
-    useState(false);
 
-  const [multiRound,setMultiRound] =
-    useState(false);
+  // 용역 형태
+
+  const [serviceType,setServiceType] =
+    useState("단타");
+
 
 
 
@@ -52,7 +64,11 @@ export default function EditProjectPage() {
 
 
 
+
+
+
   useEffect(()=>{
+
 
     if(project){
 
@@ -67,9 +83,13 @@ export default function EditProjectPage() {
 
       setEmail(project.email ?? "");
 
+
       setAmount(project.amount ?? 0);
 
-      setStatus(project.status ?? "진행중");
+
+      setStatus(
+        project.status ?? "진행중"
+      );
 
 
 
@@ -79,13 +99,8 @@ export default function EditProjectPage() {
 
 
 
-      setAnnual(
-        (project as any).annual ?? false
-      );
-
-
-      setMultiRound(
-        (project as any).multiRound ?? false
+      setServiceType(
+        (project as any).serviceType ?? "단타"
       );
 
 
@@ -110,7 +125,8 @@ export default function EditProjectPage() {
 
 
 
-  const handleSubmit =()=>{
+
+  const handleSubmit=()=>{
 
 
     if(!project)
@@ -120,42 +136,37 @@ export default function EditProjectPage() {
 
     updateProject({
 
+  ...project,
 
-      ...project,
+  id: Number(id),
 
+  name,
 
-      id:Number(id),
+  client,
 
+  managerName,
 
-      name,
+  phone,
 
-      client,
+  email,
 
-      managerName,
+  amount,
 
-      phone,
+  status,
 
-      email,
+  contractType,
 
-      amount,
+  serviceType,
 
-      status,
+  annual: serviceType === "연간",
 
+  multiRound: serviceType === "다차수",
 
-      contractType,
+  startDate,
 
+  endDate,
 
-      annual,
-
-      multiRound,
-
-
-      startDate,
-
-      endDate,
-
-
-    } as any);
+} as any);
 
 
 
@@ -170,8 +181,7 @@ export default function EditProjectPage() {
 
 
 
-
-  return (
+  return(
 
 
     <main className="min-h-screen bg-neutral-100 p-10">
@@ -184,64 +194,114 @@ export default function EditProjectPage() {
 
 
 
-
       <div className="mt-8 max-w-xl rounded-2xl bg-white p-8 shadow">
 
 
 
         <input
+
           className="mb-4 w-full rounded-lg border p-3"
+
           value={name}
-          onChange={(e)=>setName(e.target.value)}
+
+          onChange={(e)=>
+            setName(e.target.value)
+          }
+
           placeholder="용역명"
+
         />
 
 
 
+
         <input
+
           className="mb-4 w-full rounded-lg border p-3"
+
           value={client}
-          onChange={(e)=>setClient(e.target.value)}
+
+          onChange={(e)=>
+            setClient(e.target.value)
+          }
+
           placeholder="고객사"
+
         />
 
 
 
+
         <input
+
           className="mb-4 w-full rounded-lg border p-3"
+
           value={managerName}
-          onChange={(e)=>setManagerName(e.target.value)}
+
+          onChange={(e)=>
+            setManagerName(e.target.value)
+          }
+
           placeholder="담당자명"
+
         />
 
 
 
+
         <input
+
           className="mb-4 w-full rounded-lg border p-3"
+
           value={phone}
-          onChange={(e)=>setPhone(e.target.value)}
+
+          onChange={(e)=>
+            setPhone(e.target.value)
+          }
+
           placeholder="전화번호"
+
         />
 
 
 
+
         <input
+
           className="mb-4 w-full rounded-lg border p-3"
+
           value={email}
-          onChange={(e)=>setEmail(e.target.value)}
+
+          onChange={(e)=>
+            setEmail(e.target.value)
+          }
+
           placeholder="메일주소"
+
         />
+
 
 
 
 
         <input
+
           className="mb-4 w-full rounded-lg border p-3"
+
           type="number"
+
           value={amount}
-          onChange={(e)=>setAmount(Number(e.target.value))}
+
+          onChange={(e)=>
+            setAmount(Number(e.target.value))
+          }
+
           placeholder="계약금액"
+
         />
+
+
+
 
 
 
@@ -252,9 +312,11 @@ export default function EditProjectPage() {
 
         <div className="mb-4">
 
+
           <p className="mb-2 text-sm text-neutral-500">
             계약 유형
           </p>
+
 
 
           <select
@@ -279,8 +341,8 @@ export default function EditProjectPage() {
             </option>
 
 
-            <option value="단타">
-              단타
+            <option value="일반">
+              일반
             </option>
 
 
@@ -294,56 +356,49 @@ export default function EditProjectPage() {
 
 
 
-        {/* 연간 / 다차수 */}
-
-        <div className="mb-4 flex gap-6">
-
-
-          <label className="flex items-center gap-2">
-
-
-            <input
-
-              type="checkbox"
-
-              checked={annual}
-
-              onChange={(e)=>
-                setAnnual(e.target.checked)
-              }
-
-            />
-
-
-            연간 용역
-
-
-          </label>
 
 
 
+        {/* 용역 형태 */}
+
+        <div className="mb-4">
 
 
-          <label className="flex items-center gap-2">
+          <p className="mb-2 text-sm text-neutral-500">
+            용역 형태
+          </p>
 
 
-            <input
 
-              type="checkbox"
+          <select
 
-              checked={multiRound}
+            className="w-full rounded-lg border p-3"
 
-              onChange={(e)=>
-                setMultiRound(e.target.checked)
-              }
+            value={serviceType}
 
-            />
+            onChange={(e)=>
+              setServiceType(e.target.value)
+            }
 
-
-            다차수 용역
+          >
 
 
-          </label>
+            <option value="연간">
+              연간
+            </option>
+
+
+            <option value="다차수">
+              다차수
+            </option>
+
+
+            <option value="단타">
+              단타
+            </option>
+
+
+          </select>
 
 
 
@@ -365,6 +420,7 @@ export default function EditProjectPage() {
           <p className="mb-2 text-sm text-neutral-500">
             용역 기간
           </p>
+
 
 
           <div className="flex gap-3">
@@ -389,6 +445,7 @@ export default function EditProjectPage() {
             <span className="flex items-center">
               ~
             </span>
+
 
 
 
@@ -419,6 +476,7 @@ export default function EditProjectPage() {
 
 
 
+
         <select
 
           className="mb-4 w-full rounded-lg border p-3"
@@ -430,6 +488,7 @@ export default function EditProjectPage() {
           }
 
         >
+
 
           <option value="진행중">
             진행중
@@ -471,5 +530,6 @@ export default function EditProjectPage() {
 
 
   );
+
 
 }
