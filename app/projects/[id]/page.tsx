@@ -1291,27 +1291,25 @@ className="bg-blue-600 text-white rounded p-3"
 </div>
 
 
+</div>   // course 카드 닫기
 
-</div>
+
+);       // ⭐ return ( 닫기 추가
 
 
-))
+})       // map 종료
 
 
 }
 
-
-</div>
-
+</div>   // mt-8 space-y-5
 
 
-</div>
-
+</div>   // 과정 관리 박스
 
 
 </main>
 
 )
-
 
 }
