@@ -130,9 +130,23 @@ return (
 
 </h2>
 
+<div className="mt-2 flex gap-2">
 
+  {annual ? (
+    <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
+      연간
+    </span>
+  ) : multiRound ? (
+    <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-700">
+      다차수
+    </span>
+  ) : (
+    <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-700">
+      단타
+    </span>
+  )}
 
-
+</div>
 
 
 <span
@@ -177,45 +191,7 @@ difficulty==="중"
 
 
 
-{
-annual && (
 
-<span
-
-className="rounded-full bg-blue-500 px-3 py-1 text-xs font-bold text-white"
-
->
-
-연간
-
-</span>
-
-)
-
-}
-
-
-
-
-
-
-
-{
-multiRound && (
-
-<span
-
-className="rounded-full bg-purple-500 px-3 py-1 text-xs font-bold text-white"
-
->
-
-다차수
-
-</span>
-
-)
-
-}
 
 
 
