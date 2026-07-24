@@ -525,28 +525,6 @@ className="bg-neutral-500 text-white rounded p-3"
 })
 
 
-  // 지난 교육은 아래로
-  if(aFinished && !bFinished){
-    return 1;
-  }
-
-
-  if(!aFinished && bFinished){
-    return -1;
-  }
-
-
-
-  // 진행중/예정 교육
-  // → 시작일 가까운 순
-  return (
-    aStart.getTime()
-    -
-    bStart.getTime()
-  );
-
-
-})
 .map((course)=>(
 
 <div
