@@ -10,7 +10,6 @@ type ProjectCardProps = {
   amount:number;
   status:string;
   courses:any[];
-  difficulty:string;
   annual:boolean;
   multiRound:boolean;
 
@@ -40,6 +39,43 @@ function calculateCourseProgress(todos:any[]){
   );
 
 }
+
+
+
+
+
+// 과정 난이도 계산
+function calculateDifficulty(todos:any[]) {
+
+
+  const count = todos?.length || 0;
+
+
+  const totalHours = (todos || []).reduce(
+    (sum, todo)=>
+      sum + (todo.hours || 0),
+    0
+  );
+
+
+  if(count >= 15 || totalHours >= 20){
+
+    return "상";
+
+  }
+
+
+  if(count >= 10 || totalHours >= 15){
+
+    return "중";
+
+  }
+
+
+  return "하";
+
+}
+
 
 
 
@@ -76,8 +112,55 @@ function calculateProjectProgress(courses:any[]){
 
 
 
-export default function ProjectCard({
+// 용역 난이도 계산
+function calculateProjectDifficulty(courses:any[]) {
 
+
+  if(!courses || courses.length===0){
+
+    return "하";
+
+  }
+
+
+
+  const highCount =
+    courses.filter(
+      (course)=>
+        calculateDifficulty(course.todos)==="상"
+    ).length;
+
+
+
+
+  if(highCount >= 2){
+
+    return "상";
+
+  }
+
+
+
+  if(highCount === 1){
+
+    return "중";
+
+  }
+
+
+
+  return "하";
+
+
+}
+
+
+
+
+
+
+
+export default function ProjectCard({
 
 id,
 name,
@@ -85,7 +168,6 @@ client,
 amount,
 status,
 courses,
-difficulty,
 annual,
 multiRound,
 startDate,
@@ -103,8 +185,14 @@ deleteProject
 
 
 
+
 const progress =
 calculateProjectProgress(courses);
+
+
+
+const projectDifficulty =
+calculateProjectDifficulty(courses);
 
 
 
@@ -114,9 +202,6 @@ return (
 
 
 <div className="rounded-2xl bg-white p-6 shadow">
-
-
-
 
 
 
@@ -130,23 +215,57 @@ return (
 
 </h2>
 
+
+
+
+
 <div className="mt-2 flex gap-2">
 
-  {annual ? (
-    <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
-      연간
-    </span>
-  ) : multiRound ? (
-    <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-700">
-      다차수
-    </span>
-  ) : (
-    <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-700">
-      단타
-    </span>
-  )}
+
+{annual ? (
+
+<span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
+
+연간
+
+</span>
+
+)
+
+:
+
+multiRound ? (
+
+<span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-700">
+
+다차수
+
+</span>
+
+)
+
+:
+
+(
+
+<span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-700">
+
+단타
+
+</span>
+
+)
+
+}
+
+
 
 </div>
+
+
+
+
+
 
 
 <span
@@ -156,7 +275,7 @@ className={`
 flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white
 
 ${
-difficulty==="상"
+projectDifficulty==="상"
 
 ?
 
@@ -164,7 +283,7 @@ difficulty==="상"
 
 :
 
-difficulty==="중"
+projectDifficulty==="중"
 
 ?
 
@@ -180,16 +299,9 @@ difficulty==="중"
 
 >
 
-{difficulty}
+{projectDifficulty}
 
 </span>
-
-
-
-
-
-
-
 
 
 
@@ -209,8 +321,6 @@ difficulty==="중"
 {client}
 
 </p>
-
-
 
 
 
@@ -289,6 +399,19 @@ width:`${progress}%`
 
 
 
+<p className="mt-4 font-bold">
+
+용역 난이도 :
+{projectDifficulty}
+
+</p>
+
+
+
+
+
+
+
 <p className="mt-4 text-sm text-green-700">
 
 상태 :
@@ -305,7 +428,6 @@ width:`${progress}%`
 <div className="mt-5 flex gap-3">
 
 
-
 <Link
 
 href={`/projects/${id}`}
@@ -317,7 +439,6 @@ className="rounded-lg bg-blue-600 px-4 py-2 text-white"
 상세보기
 
 </Link>
-
 
 
 
@@ -353,7 +474,6 @@ className="rounded-lg bg-red-600 px-4 py-2 text-white"
 삭제
 
 </button>
-
 
 
 
