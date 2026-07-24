@@ -6,70 +6,6 @@ import Link from "next/link";
 
 
 
-function calculateCourseDifficulty(todos:any[]) {
-
-  const count =
-    todos?.length || 0;
-
-
-  if(count >= 15){
-    return "상";
-  }
-
-
-  if(count >= 5){
-    return "중";
-  }
-
-
-  return "하";
-
-}
-
-
-
-
-
-function calculateCourseDifficulty(todos:any[]) {
-
-  if(!todos || todos.length === 0){
-    return "하";
-  }
-
-
-  const todoCount = todos.length;
-
-
-  const totalHours = todos.reduce(
-    (sum,todo)=>
-      sum + (Number(todo.hours) || 0),
-    0
-  );
-
-
-  if(
-    todoCount >= 12 ||
-    totalHours >= 15
-  ){
-    return "상";
-  }
-
-
-  if(
-    todoCount >= 8 ||
-    totalHours >= 10
-  ){
-    return "중";
-  }
-
-
-  return "하";
-
-}
-
-
-
-
 
 
 
@@ -79,7 +15,6 @@ export default function ProjectsPage() {
 
   const { projects } =
     useProjects();
-
 
 
 
@@ -98,7 +33,6 @@ export default function ProjectsPage() {
 
 
 
-
   return (
 
 
@@ -106,11 +40,7 @@ export default function ProjectsPage() {
 
 
 
-
-
       <div className="mb-8">
-
-
 
 
 
@@ -124,13 +54,11 @@ export default function ProjectsPage() {
 
 
 
-
         <p className="mt-2 text-neutral-500">
 
           진행 중인 용역과 프로젝트를 관리합니다.
 
         </p>
-
 
 
 
@@ -160,7 +88,6 @@ export default function ProjectsPage() {
 
 
       </div>
-
 
 
 
@@ -232,9 +159,6 @@ export default function ProjectsPage() {
 
 
                   courses={project.courses}
-
-
-                 
 
 
 
