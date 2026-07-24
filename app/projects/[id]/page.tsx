@@ -21,24 +21,22 @@ function calculateProgress(todos:any[]) {
 }
 
 
-function calculateDifficulty(todos:any[]) {
+function calculateDifficulty(todos: any[]) {
 
   const count = todos?.length || 0;
 
+  const totalHours = (todos || []).reduce(
+    (sum, todo) => sum + (todo.hours || 0),
+    0
+  );
 
-  if(count >= 15){
-
+  if (count >= 15 || totalHours >= 20) {
     return "상";
-
   }
 
-
-  if(count >= 5){
-
+  if (count >= 10 || totalHours >= 15) {
     return "중";
-
   }
-
 
   return "하";
 
@@ -563,7 +561,10 @@ className="rounded-xl border bg-white p-5"
 
 </div>
 
-
+<p className="text-sm text-neutral-500">
+  총 예상시간 :
+  {calculateTotalHours(course.todos)}시간
+</p>
 
 <div className="flex gap-2">
 
