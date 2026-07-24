@@ -99,7 +99,14 @@ const [editCourseForm,setEditCourseForm]=useState({
   endDate:""
 });
 
-const [courseForm,setCourseForm]=useState({
+const [courseForm,setCourseForm]=useState<{
+  name:string;
+  startDate:string;
+  endDate:string;
+  people:number;
+  manager:string;
+  difficulty:"하"|"중"|"상";
+}>({
 
 name:"",
 startDate:"",
