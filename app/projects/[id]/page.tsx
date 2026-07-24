@@ -58,6 +58,7 @@ const {
  addCourse,
  updateCourse,
  deleteCourse,
+ duplicateCourse,
  addTodo,
  deleteTodo,
  updateTodo
@@ -1230,25 +1231,31 @@ className="bg-blue-600 text-white rounded p-3"
 
 )
 }
-<div className="flex justify-end mt-5">
+<div className="flex justify-end gap-2 mt-5">
 
-<button
+  <button
+    onClick={() =>
+      duplicateCourse(
+        project.id,
+        course.id
+      )
+    }
+    className="bg-blue-600 text-white px-4 py-2 rounded"
+  >
+    📄 과정 복사
+  </button>
 
-onClick={()=>deleteCourse(
-
-project.id,
-
-course.id
-
-)}
-
-className="bg-red-600 text-white px-4 py-2 rounded"
-
->
-
-과정 삭제
-
-</button>
+  <button
+    onClick={() =>
+      deleteCourse(
+        project.id,
+        course.id
+      )
+    }
+    className="bg-red-600 text-white px-4 py-2 rounded"
+  >
+    과정 삭제
+  </button>
 
 </div>
 

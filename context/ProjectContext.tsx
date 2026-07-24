@@ -128,7 +128,13 @@ type ProjectContextType = {
 
   )=>void;
 
+duplicateCourse:(
 
+  projectId:number,
+
+  courseId:number
+
+)=>void;
 
   updateCourse:(
 
@@ -608,51 +614,77 @@ project
 
 
 
+const deleteCourse = (
+  projectId: number,
+  courseId: number
+) => {
+
+  setProjects((prev) =>
+    prev.map((project) => {
+
+      if (project.id !== projectId) {
+        return project;
+      }
+
+      const courses = project.courses.filter(
+        (course) => course.id !== courseId
+      );
+
+      return {
+        ...project,
+        courses,
+        progress: calculateProjectProgress(courses),
+      };
+
+    })
+  );
+
+};
 
 
 
 
+const duplicateCourse = (
+  projectId: number,
+  courseId: number
+) => {
 
-const deleteCourse =
+  setProjects((prev) =>
+    prev.map((project) => {
 
-(
-projectId:number,
-courseId:number
-)=>{
+      if (project.id !== projectId) {
+        return project;
+      }
 
+      const original = project.courses.find(
+        (course) => course.id === courseId
+      );
 
-setProjects(prev=>
+      if (!original) {
+        return project;
+      }
 
-prev.map(project=>
+      const copiedCourse = {
+        ...original,
+        id: Date.now(),
+        name: `${original.name} (복사본)`,
+        todos: original.todos.map((todo) => ({
+          ...todo,
+          id: Date.now() + Math.random(),
+          completed: false,
+        })),
+      };
 
-project.id===projectId
+      return {
+        ...project,
+        courses: [
+          ...project.courses,
+          copiedCourse,
+        ],
+      };
 
-?
-
-{
-
-...project,
-
-courses:
-
-project.courses.filter(
-
-course=>
-
-course.id!==courseId
-
-)
-
-}
-
-:
-
-project
-
-)
-
-);
-
+    })
+  );
 
 };
 
@@ -946,6 +978,8 @@ deleteProject,
 updateProject,
 
 addCourse,
+
+duplicateCourse,
 
 updateCourse,
 
