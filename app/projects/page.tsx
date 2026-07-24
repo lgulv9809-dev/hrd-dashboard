@@ -30,37 +30,40 @@ function calculateCourseDifficulty(todos:any[]) {
 
 
 
-function calculateProjectDifficulty(courses:any[]) {
+function calculateCourseDifficulty(todos:any[]) {
+
+  if(!todos || todos.length === 0){
+    return "하";
+  }
 
 
-  const highCourses =
-
-    courses?.filter(
-
-      (course)=>
-        calculateCourseDifficulty(course.todos) === "상"
-
-    ).length || 0;
+  const todoCount = todos.length;
 
 
+  const totalHours = todos.reduce(
+    (sum,todo)=>
+      sum + (Number(todo.hours) || 0),
+    0
+  );
 
 
-  if(highCourses >= 3){
+  if(
+    todoCount >= 12 ||
+    totalHours >= 15
+  ){
     return "상";
   }
 
 
-
-
-  if(highCourses >= 1){
+  if(
+    todoCount >= 8 ||
+    totalHours >= 10
+  ){
     return "중";
   }
 
 
-
-
   return "하";
-
 
 }
 

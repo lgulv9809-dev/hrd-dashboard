@@ -51,6 +51,11 @@ type Course = {
 
   status:string;
 
+
+  difficulty?: "하" | "중" | "상";
+
+  difficultyManual?: boolean;
+
 };
 
 
@@ -228,7 +233,42 @@ useState<Project[]>(initialProjects);
 
 const [loaded,setLoaded] = useState(false);
 
+function calculateCourseDifficulty(todos:Todo[]) {
 
+  if(!todos || todos.length === 0){
+    return "하";
+  }
+
+
+  const todoCount = todos.length;
+
+
+  const totalHours = todos.reduce(
+    (sum,todo)=>
+      sum + (Number(todo.hours) || 0),
+    0
+  );
+
+
+  if(
+    todoCount >= 12 ||
+    totalHours >= 15
+  ){
+    return "상";
+  }
+
+
+  if(
+    todoCount >= 8 ||
+    totalHours >= 10
+  ){
+    return "중";
+  }
+
+
+  return "하";
+
+}
 
 
 
@@ -367,7 +407,15 @@ courses:
 
 
 todos:
-course.todos ?? []
+course.todos ?? [],
+
+
+difficulty:
+course.difficulty ?? "하",
+
+
+difficultyManual:
+course.difficultyManual ?? false
 
 
 }))
@@ -697,7 +745,6 @@ const duplicateCourse = (
 
 
 const addTodo =
-
 (
 projectId:number,
 courseId:number,
@@ -733,22 +780,41 @@ return course;
 
 
 
+const updatedTodos = [
+
+...course.todos,
+
+todo
+
+];
+
+
+
 return {
 
 
 ...course,
 
 
-todos:[
+todos: updatedTodos,
 
-...course.todos,
 
-todo
+difficulty:
 
-]
+course.difficultyManual
+
+?
+
+course.difficulty
+
+:
+
+calculateCourseDifficulty(updatedTodos)
+
 
 
 };
+
 
 
 })
@@ -764,7 +830,6 @@ todo
 
 
 };
-
 
 
 
@@ -804,11 +869,7 @@ return course;
 
 
 
-return {
-
-...course,
-
-todos:
+const updatedTodos =
 
 course.todos.map(item=>
 
@@ -822,7 +883,29 @@ todo
 
 item
 
-)
+);
+
+
+
+return {
+
+...course,
+
+todos: updatedTodos,
+
+
+difficulty:
+
+course.difficultyManual
+
+?
+
+course.difficulty
+
+:
+
+calculateCourseDifficulty(updatedTodos)
+
 
 };
 
@@ -918,13 +1001,7 @@ return course;
 
 
 
-return {
-
-
-...course,
-
-
-todos:
+const updatedTodos =
 
 course.todos.filter(
 
@@ -932,7 +1009,29 @@ todo=>
 
 todo.id!==todoId
 
-)
+);
+
+
+
+return {
+
+...course,
+
+
+todos: updatedTodos,
+
+
+difficulty:
+
+course.difficultyManual
+
+?
+
+course.difficulty
+
+:
+
+calculateCourseDifficulty(updatedTodos)
 
 
 };
