@@ -102,7 +102,12 @@ weekDays[selectedDate.getDay()];
   const handleAdd = () => {
 
   if (!text.trim()) return;
-
+const dateString =
+  `${selectedDate.getFullYear()}-${
+    String(selectedDate.getMonth() + 1).padStart(2, "0")
+  }-${
+    String(selectedDate.getDate()).padStart(2, "0")
+  }`;
   // 과정을 선택하지 않은 경우 → 개인 Todo
   if (selectedCourse === "") {
 
@@ -111,7 +116,7 @@ weekDays[selectedDate.getDay()];
   text,
   done: false,
   hours: hours,
-  date: selectedDate.toISOString().slice(0,10),
+  date: dateString,
 });
 
   } else {
@@ -128,8 +133,8 @@ weekDays[selectedDate.getDay()];
         completed: false,
         difficulty: "보통",
         hours: 1,
-        startDate: selectedDate.toISOString().slice(0, 10),
-        endDate: selectedDate.toISOString().slice(0, 10),
+        startDate: dateString,
+endDate: dateString,
       }
     );
 
