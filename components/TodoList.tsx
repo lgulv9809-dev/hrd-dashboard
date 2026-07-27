@@ -513,104 +513,27 @@ className="rounded-lg bg-neutral-200 px-3 py-1"
 
 {/* 개인 Todo */}
 
-
 {
-
 visiblePersonalTodos.map(todo=>(
 
-
 <div
-
 key={todo.id}
-
 className="flex items-center justify-between rounded-lg bg-green-50 p-4"
-
 >
-
-
-{
-
-editingPersonalId===todo.id ? (
-
-
-<div className="flex gap-2">
-
-
-<input
-
-className="rounded border px-2 py-1"
-
-value={editPersonalText}
-
-onChange={(e)=>
-setEditPersonalText(e.target.value)
-}
-
-/>
-<input
-  type="number"
-  min="1"
-  className="w-20 rounded border px-2 py-1"
-  value={editPersonalHours}
-  onChange={(e)=>
-    setEditPersonalHours(Number(e.target.value))
-  }
-/>
-
-<button
-
-className="rounded bg-green-700 px-3 py-1 text-sm text-white"
-
-onClick={()=>{
-
-
-updatePersonalTodo(
-
-todo.id,
-
-editPersonalText,
-
-editPersonalHours
-
-);
-
-
-setEditingPersonalId(null);
-
-
-}}
-
->
-
-저장
-
-</button>
-
-
-</div>
-
-
-)
-
-:
-
-(
-
-<>
 
 <div className="flex items-center gap-3">
 
 <input
-  type="checkbox"
-  checked={todo.done}
-  onChange={()=>{
-    updatePersonalTodo(
-  todo.id,
-  todo.text,
-  todo.hours || 0,
-  !todo.done
-);
-  }}
+type="checkbox"
+checked={todo.done}
+onChange={()=>{
+  updatePersonalTodo(
+    todo.id,
+    todo.text,
+    todo.hours || 0,
+    !todo.done
+  );
+}}
 />
 
 
@@ -621,6 +544,7 @@ className={
   : ""
 }
 >
+
 {todo.text}
 
 <span className="ml-2 text-sm text-neutral-500">
@@ -632,31 +556,51 @@ className={
 </div>
 
 
-<div>
-
 <div className="flex gap-2">
 
 
 <button
-  onClick={() => movePersonalTodo(todo.id, "up")}
+onClick={()=>movePersonalTodo(todo.id,"up")}
+className="rounded bg-gray-200 px-2 py-1 text-sm"
 >
-  ▲
+▲
 </button>
 
 
 <button
-  onClick={() => movePersonalTodo(todo.id, "down")}
+onClick={()=>movePersonalTodo(todo.id,"down")}
+className="rounded bg-gray-200 px-2 py-1 text-sm"
 >
-  ▼
+▼
 </button>
 
 
-<button>
+<button
+
+onClick={()=>{
+
+setEditingPersonalId(todo.id);
+
+setEditPersonalText(todo.text);
+
+setEditPersonalHours(todo.hours || 1);
+
+}}
+
+className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
+
+>
 수정
 </button>
 
 
-<button>
+<button
+
+onClick={()=>deleteTodo(todo.id)}
+
+className="rounded bg-red-600 px-3 py-1 text-sm text-white"
+
+>
 삭제
 </button>
 
@@ -666,18 +610,10 @@ className={
 
 </div>
 
-
-</>
-
-)
-
-}
-
-</div>
-
 ))
-
 }
+
+
 
 
 {/* 과정 Todo */}
