@@ -96,7 +96,8 @@ const [editCourseForm,setEditCourseForm]=useState({
   name:"",
   manager:"",
   startDate:"",
-  endDate:""
+  endDate:"",
+  difficulty:"하" as "하" | "중" | "상"
 });
 
 const [courseForm,setCourseForm]=useState<{
@@ -405,7 +406,21 @@ className="bg-green-800 text-white rounded-lg px-5 py-3"
     />
 
 
-    <select
+    
+
+
+    <input
+      type="date"
+      className="border p-3 rounded"
+      value={courseForm.endDate}
+      onChange={(e)=>
+        setCourseForm({
+          ...courseForm,
+          endDate:e.target.value
+        })
+      }
+    />
+<select
       className="border p-3 rounded"
       value={courseForm.difficulty}
       onChange={(e)=>
@@ -429,20 +444,6 @@ className="bg-green-800 text-white rounded-lg px-5 py-3"
       </option>
 
     </select>
-
-
-    <input
-      type="date"
-      className="border p-3 rounded"
-      value={courseForm.endDate}
-      onChange={(e)=>
-        setCourseForm({
-          ...courseForm,
-          endDate:e.target.value
-        })
-      }
-    />
-
 
     <button
       onClick={handleAddCourse}
@@ -596,15 +597,11 @@ onClick={()=>{
 setEditCourseId(course.id);
 
 setEditCourseForm({
-
-name:course.name,
-
-manager:course.manager || "",
-
-startDate:course.startDate || "",
-
-endDate:course.endDate || ""
-
+  name:course.name,
+  manager:course.manager || "",
+  startDate:course.startDate || "",
+  endDate:course.endDate || "",
+  difficulty: course.difficulty || "하"
 });
 
 }}
@@ -1200,7 +1197,20 @@ name:e.target.value
 })
 }
 />
-
+<select
+  className="border p-3 rounded"
+  value={editCourseForm.difficulty}
+  onChange={(e)=>
+    setEditCourseForm({
+      ...editCourseForm,
+      difficulty:e.target.value as "하" | "중" | "상"
+    })
+  }
+>
+  <option value="하">하</option>
+  <option value="중">중</option>
+  <option value="상">상</option>
+</select>
 
 <input
 className="border p-3 rounded"
@@ -1249,7 +1259,9 @@ updateCourse(
   {
     ...course,
     ...editCourseForm,
-    id: course.id
+    id: course.id,
+    difficulty: editCourseForm.difficulty,
+    difficultyManual: true
   }
 );
 
