@@ -30,12 +30,13 @@ type TodoContextType = {
 
   addTodo:(todo:Todo)=>void;
 
-  updateTodo:(
-    id:number,
-    text:string,
-    hours:number,
-    done?:boolean
-  )=>void;
+  updateTodo(
+  id:number,
+  text:string,
+  hours:number,
+  done?:boolean,
+  order?:number
+):void;
 
   deleteTodo:(
     id:number
