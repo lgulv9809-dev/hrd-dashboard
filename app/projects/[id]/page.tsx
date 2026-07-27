@@ -1309,10 +1309,10 @@ className="bg-blue-600 text-white rounded p-3"
 
 }
 
-</div>   // mt-8 space-y-5
+</div>   
 
 
-</div>   // 과정 관리 박스
+</div>   
 
 
 </main>
