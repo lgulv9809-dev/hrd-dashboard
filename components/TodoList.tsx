@@ -117,6 +117,7 @@ const dateString =
   done: false,
   hours: hours,
   date: dateString,
+  order: Date.now(),
 });
 
   } else {
@@ -183,13 +184,20 @@ setHours(1);
   })
   .sort((a,b)=>{
 
-    if(a.done === b.done){
-      return 0;
-    }
-
+  // 완료된 일은 아래로
+  if(a.done !== b.done){
     return a.done ? 1 : -1;
+  }
 
-  });
+
+  // 사용자가 변경한 순서 유지
+  return (
+    (a.order ?? a.id)
+    -
+    (b.order ?? b.id)
+  );
+
+});
 
 
 
@@ -361,7 +369,61 @@ filteredProjectTodos.reduce(
   (sum, todo) => sum + (todo.hours || 0),
   0
 );
+const movePersonalTodo = (
+  todoId:number,
+  direction:"up" | "down"
+)=>{
 
+  const list = [...visiblePersonalTodos];
+
+  const index = list.findIndex(
+    todo=>todo.id===todoId
+  );
+
+  if(index===-1) return;
+
+
+  if(direction==="up" && index===0){
+    return;
+  }
+
+
+  if(
+    direction==="down" &&
+    index===list.length-1
+  ){
+    return;
+  }
+
+
+  const targetIndex =
+    direction==="up"
+      ? index-1
+      : index+1;
+
+
+  const current = list[index];
+  const target = list[targetIndex];
+
+
+  updatePersonalTodo(
+    current.id,
+    current.text,
+    current.hours || 0,
+    current.done,
+    target.order ?? target.id
+  );
+
+
+  updatePersonalTodo(
+    target.id,
+    target.text,
+    target.hours || 0,
+    target.done,
+    current.order ?? current.id
+  );
+
+};
 const totalPersonalHours =
 visiblePersonalTodos.reduce(
   (sum, todo) =>
@@ -473,7 +535,7 @@ className="flex items-center justify-between rounded-lg bg-green-50 p-4"
 >
 
 
-{
+
 
 editingPersonalId===todo.id ? (
 
@@ -574,15 +636,24 @@ className={
 
 </div>
 
-)
-
-}
-
-
-
-
 
 <div className="flex gap-2">
+
+
+<button
+  onClick={() => movePersonalTodo(todo.id, "up")}
+  className="rounded bg-gray-200 px-2 py-1 text-sm"
+>
+  ▲
+</button>
+
+
+<button
+  onClick={() => movePersonalTodo(todo.id, "down")}
+  className="rounded bg-gray-200 px-2 py-1 text-sm"
+>
+  ▼
+</button>
 
 
 {

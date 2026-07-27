@@ -15,6 +15,8 @@ type Todo = {
   done:boolean;
   hours:number;
   date:string;
+
+  order?:number;
 };
 
 
@@ -203,7 +205,9 @@ text:string,
 
 hours:number,
 
-done?:boolean
+done?:boolean,
+
+order?:number
 
 )=>{
 
@@ -224,7 +228,9 @@ text,
 
 hours,
 
-done: done ?? todo.done
+done: done ?? todo.done,
+
+order: order ?? todo.order
 
 }
 
