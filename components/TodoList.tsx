@@ -34,13 +34,6 @@ const [text,setText] = useState("");
 
 
 
-  const [editingId,setEditingId] =
-  useState<number|null>(null);
-
-
-  const [editText,setEditText] =
-  useState("");
-
 
 
   const [editingPersonalId,setEditingPersonalId] =
@@ -535,7 +528,7 @@ className="flex items-center justify-between rounded-lg bg-green-50 p-4"
 >
 
 
-
+{
 
 editingPersonalId===todo.id ? (
 
@@ -603,6 +596,8 @@ setEditingPersonalId(null);
 
 (
 
+<>
+
 <div className="flex items-center gap-3">
 
 <input
@@ -637,12 +632,13 @@ className={
 </div>
 
 
+<div>
+
 <div className="flex gap-2">
 
 
 <button
   onClick={() => movePersonalTodo(todo.id, "up")}
-  className="rounded bg-gray-200 px-2 py-1 text-sm"
 >
   ▲
 </button>
@@ -650,73 +646,37 @@ className={
 
 <button
   onClick={() => movePersonalTodo(todo.id, "down")}
-  className="rounded bg-gray-200 px-2 py-1 text-sm"
 >
   ▼
 </button>
 
 
-{
-
-editingPersonalId!==todo.id && (
-
-
-<button
-
-onClick={()=>{
-
-setEditingPersonalId(todo.id);
-
-setEditPersonalText(todo.text);
-
-setEditPersonalHours(todo.hours || 1);
-
-}}
-
-className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
-
->
-
+<button>
 수정
-
 </button>
 
+
+<button>
+삭제
+</button>
+
+
+</div>
+
+</div>
+
+
+</>
 
 )
 
 }
 
-
-
-<button
-
-onClick={()=>deleteTodo(todo.id)}
-
-className="rounded bg-red-600 px-3 py-1 text-sm text-white"
-
->
-
-삭제
-
-</button>
-
-
 </div>
-
-
-</div>
-
 
 ))
 
 }
-
-
-
-
-
-
-
 
 
 {/* 과정 Todo */}
