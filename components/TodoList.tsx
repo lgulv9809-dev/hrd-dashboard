@@ -286,19 +286,76 @@ setHours(1);
 
   filteredProjectTodos.sort((a,b)=>{
 
+  // 미완료 먼저
   if(a.completed !== b.completed){
-
     return a.completed ? 1 : -1;
-
   }
 
+  // 사용자가 순서를 변경한 경우
+  const orderDiff =
+    (a.order ?? a.id) -
+    (b.order ?? b.id);
 
-  return new Date(a.startDate).getTime()
-  -
-  new Date(b.startDate).getTime();
+  if(orderDiff !== 0){
+    return orderDiff;
+  }
+
+  // order가 같으면 날짜순
+  return (
+    new Date(a.startDate).getTime() -
+    new Date(b.startDate).getTime()
+  );
 
 });
+const moveTodo = (
+  todoId: number,
+  direction: "up" | "down"
+) => {
 
+  const list = [...filteredProjectTodos];
+
+  const index = list.findIndex(
+    t => t.id === todoId
+  );
+
+  if (index === -1) return;
+
+  if (direction === "up" && index === 0) return;
+
+  if (
+    direction === "down" &&
+    index === list.length - 1
+  ) {
+    return;
+  }
+
+  const targetIndex =
+    direction === "up"
+      ? index - 1
+      : index + 1;
+
+  const current = list[index];
+  const target = list[targetIndex];
+
+  updateTodo(
+    current.projectId,
+    current.courseId,
+    {
+      ...current,
+      order: target.order ?? target.id
+    }
+  );
+
+  updateTodo(
+    target.projectId,
+    target.courseId,
+    {
+      ...target,
+      order: current.order ?? current.id
+    }
+  );
+
+};
 const totalProjectHours =
 filteredProjectTodos.reduce(
   (sum, todo) => sum + (todo.hours || 0),
@@ -774,10 +831,31 @@ className={
 
 <div className="flex gap-2">
 
+{editingProjectTodo !== todo.id && (
+  <>
+    <button
+      onClick={() => moveTodo(todo.id, "up")}
+      className="rounded bg-gray-200 px-2 py-1 text-sm"
+      title="위로 이동"
+    >
+      ▲
+    </button>
+
+    <button
+      onClick={() => moveTodo(todo.id, "down")}
+      className="rounded bg-gray-200 px-2 py-1 text-sm"
+      title="아래로 이동"
+    >
+      ▼
+    </button>
+  </>
+)}
+
 {
 editingProjectTodo!==todo.id &&
 
 <button
+
 className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
 onClick={()=>{
 

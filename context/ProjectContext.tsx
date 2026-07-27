@@ -27,6 +27,8 @@ type Todo = {
 
   endDate:string;
 
+  order?:number;
+
 };
 
 
@@ -782,9 +784,12 @@ return course;
 
 const updatedTodos = [
 
-...course.todos,
+  ...course.todos,
 
-todo
+  {
+    ...todo,
+    order: Date.now()
+  }
 
 ];
 
