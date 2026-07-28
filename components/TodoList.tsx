@@ -514,7 +514,8 @@ className="rounded-lg bg-neutral-200 px-3 py-1"
 {/* 개인 Todo */}
 
 {
-visiblePersonalTodos.map(todo=>(
+visiblePersonalTodos.map((todo)=>(
+
 
 <div
 key={todo.id}
@@ -577,13 +578,26 @@ className="rounded bg-gray-200 px-2 py-1 text-sm"
 
 <button
 
-onClick={()=>{
+onClick={() => {
 
-setEditingPersonalId(todo.id);
+  const newText = prompt("업무명을 수정하세요.", todo.text);
 
-setEditPersonalText(todo.text);
+  if (newText === null) return;
 
-setEditPersonalHours(todo.hours || 1);
+  const newHours = prompt(
+    "예상 시간을 입력하세요.",
+    String(todo.hours || 1)
+  );
+
+  if (newHours === null) return;
+
+  updatePersonalTodo(
+    todo.id,
+    newText,
+    Number(newHours),
+    todo.done,
+    todo.order
+  );
 
 }}
 
